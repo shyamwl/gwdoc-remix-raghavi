@@ -66,7 +66,8 @@ export function StoriesTable({
             <TableHead className="w-[15%]">Status</TableHead>
             <TableHead className="w-[15%]">Assignee</TableHead>
             <TableHead className="w-[15%]">Due Date</TableHead>
-            <TableHead className="w-[20%]">Story Points</TableHead>
+            <TableHead className="w-[15%]">Story Points</TableHead>
+            <TableHead className="w-[15%]">Estimation</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -157,18 +158,38 @@ export function StoriesTable({
                 </Popover>
               </TableCell>
               <TableCell>
-                <Input
-                  type="number"
-                  min="0"
-                  placeholder="Points"
-                  value={story.storyPoints ?? ""}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    onStoryPointsChange(story.id, e.target.value);
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-24"
-                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min="0"
+                    placeholder="Points"
+                    value={story.storyPoints ?? ""}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      onStoryPointsChange(story.id, e.target.value);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-20"
+                  />
+                  {story.storyPoints && (
+                    <span className="text-sm text-muted-foreground">
+                      {story.storyPoints === 1 ? 'Simple' : 
+                       story.storyPoints <= 3 ? 'Medium' : 
+                       story.storyPoints <= 5 ? 'Complex' : 'Very Complex'}
+                    </span>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                {story.storyPoints && (
+                  <div className="text-sm">
+                    <span className="font-medium">{story.storyPoints * 2} days</span>
+                    <div className="text-muted-foreground text-xs">
+                      {story.storyPoints <= 2 ? 'Quick task' : 
+                       story.storyPoints <= 5 ? 'Standard sprint' : 'Multi-sprint'}
+                    </div>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}

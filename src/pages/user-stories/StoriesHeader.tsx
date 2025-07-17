@@ -25,15 +25,9 @@ export function StoriesHeader({
           onOpenChange={onNewStoryDialogOpenChange}
           onCreateStory={onCreateStory}
         />
-        <Button onClick={() => onExport('Jira')} variant="outline" className="gap-2">
-          <Check className="h-4 w-4" />
-          Export to Jira
-        </Button>
-        <Button onClick={() => onExport('Linear')} variant="outline" className="gap-2">
-          Export to Linear
-        </Button>
         <Button onClick={() => onExport('Notion')} variant="outline" className="gap-2">
-          Export to Notion
+          <Check className="h-4 w-4" />
+          Connect to Notion
         </Button>
       </div>
     </div>

@@ -1,8 +1,7 @@
 
-import { ClipboardList, MessageSquare, Code2, TestTube, Pencil, Clock, Loader2, CheckCircle } from "lucide-react";
+import { Clock, Loader2, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { CreateToolDialog } from "./CreateToolDialog";
 import { useDocumentGeneration } from "@/context/DocumentGenerationContext";
 import { useMemo } from "react";
 
@@ -21,69 +20,35 @@ const documentToSidebarMap: Record<string, string> = {
 export function AdvancedTools() {
   const { documentStatus, isGeneratingDocuments } = useDocumentGeneration();
 
-  // Prepare advanced tools array with status indicators
-  const advancedTools = useMemo(() => [
+  // Simple flat list of tools as requested
+  const tools = useMemo(() => [
     {
-      title: "Product Owner Tools",
-      icon: ClipboardList,
-      items: [{
-        name: "User Stories",
-        path: "/user-stories",
-        docId: "user-stories"
-      }, "User Personas", {
-        name: "Requirements",
-        path: "#",
-        docId: "acceptance-criteria"
-      }, {
-        name: "Project Quiz",
-        path: "/quiz/list"
-      }]
-    }, {
-      title: "All Teams",
-      icon: MessageSquare,
-      items: [{
-        name: "Chat",
-        path: "/chat"
-      }, {
-        name: "Custom Prompts",
-        path: "#"
-      }]
-    }, {
-      title: "Developer Tools",
-      icon: Code2,
-      items: [{
-        name: "API Docs",
-        path: "/api-docs",
-        docId: "api-documentation"
-      }, "Validation", {
-        name: "DB Schema",
-        path: "/database-schema",
-        docId: "database-schema"
-      }, {
-        name: "Logic Charts",
-        path: "#",
-        docId: "flow-chart"
-      }, "Routes"]
-    }, {
-      title: "Tester Tools",
-      icon: TestTube,
-      items: ["Test Plan", {
-        name: "Test Cases",
-        path: "#",
-        docId: "test-cases"
-      }]
-    }, {
-      title: "UI/UX Design",
-      icon: Pencil,
-      items: [{
-        name: "Field Labels",
-        path: "#",
-        docId: "landing-page"
-      }, {
-        name: "Missing Frames",
-        path: "#",
-        docId: "knowledge-base"
-      }]
+      name: "User Stories",
+      path: "/user-stories",
+      docId: "user-stories"
+    },
+    {
+      name: "Test Cases",
+      path: "#",
+      docId: "test-cases"
+    },
+    {
+      name: "DB Schema",
+      path: "/database-schema",
+      docId: "database-schema"
+    },
+    {
+      name: "API Docs",
+      path: "/api-docs",
+      docId: "api-documentation"
+    },
+    {
+      name: "Validation",
+      path: "#"
+    },
+    {
+      name: "Chat",
+      path: "/chat"
     }
   ], []);
 
@@ -108,38 +73,23 @@ export function AdvancedTools() {
 
   return (
     <SidebarMenu>
-      {advancedTools.map(section => (
-        <SidebarMenuItem key={section.title}>
-          <SidebarMenuButton asChild>
-            <button className="w-full text-left">
-              <div className="flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors hover:bg-sidebar-accent group">
-                <section.icon className="h-5 w-5" />
-                <span>{section.title}</span>
-                <CreateToolDialog categoryTitle={section.title} />
-              </div>
-            </button>
-          </SidebarMenuButton>
-          <div className="pl-14 animate-content-fade">
-            {section.items.map(item => {
-              const itemName = typeof item === "string" ? item : item.name;
-              const itemPath = typeof item === "string" ? "#" : item.path;
-              const docId = typeof item === "string" ? undefined : item.docId;
-              const statusIcon = getStatusIcon(docId);
-              
-              return (
-                <Link
-                  key={itemName}
-                  to={itemPath}
-                  className="flex items-center justify-between py-2 text-sm text-muted-foreground hover:text-foreground transition-colors mx-[9px]"
-                >
-                  <span>{itemName}</span>
-                  {statusIcon}
-                </Link>
-              );
-            })}
-          </div>
-        </SidebarMenuItem>
-      ))}
+      {tools.map(tool => {
+        const statusIcon = getStatusIcon(tool.docId);
+        
+        return (
+          <SidebarMenuItem key={tool.name}>
+            <SidebarMenuButton asChild>
+              <Link
+                to={tool.path}
+                className="flex items-center justify-between px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <span>{tool.name}</span>
+                {statusIcon}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
     </SidebarMenu>
   );
 }

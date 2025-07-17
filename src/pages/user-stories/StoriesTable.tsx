@@ -158,27 +158,18 @@ export function StoriesTable({
                 </Popover>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    min="1"
-                    placeholder="Points"
-                    value={story.storyPoints ?? ""}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      onStoryPointsChange(story.id, e.target.value);
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-20"
-                  />
-                  {story.storyPoints && story.storyPoints > 0 && (
-                    <span className="text-sm text-muted-foreground">
-                      {story.storyPoints <= 10 ? 'Simple' : 
-                       story.storyPoints <= 20 ? 'Medium' : 
-                       story.storyPoints <= 30 ? 'Complex' : 'Very Complex'}
-                    </span>
-                  )}
-                </div>
+                <Input
+                  type="number"
+                  min="1"
+                  placeholder="Points"
+                  value={story.storyPoints ?? ""}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onStoryPointsChange(story.id, e.target.value);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-20"
+                />
               </TableCell>
               <TableCell>
                 {story.storyPoints && story.storyPoints > 0 && (

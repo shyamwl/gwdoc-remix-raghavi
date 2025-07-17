@@ -1,7 +1,7 @@
 
-import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, MessageSquare, ChevronDown, Clipboard, Laptop } from "lucide-react";
+import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, MessageSquare, ChevronRight, Clipboard, Laptop } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "@/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarGroup } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useDocumentGeneration } from "@/context/DocumentGenerationContext";
 import { useMemo, useState } from "react";
@@ -22,9 +22,8 @@ export function AdvancedTools() {
   const { documentStatus, isGeneratingDocuments } = useDocumentGeneration();
   const [productTeamOpen, setProductTeamOpen] = useState(false);
   const [developerToolsOpen, setDeveloperToolsOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
 
-  // Tool categories with their items
+  // Tool categories with their items (Chat removed)
   const toolCategories = useMemo(() => [
     {
       name: "Product Team Tools",
@@ -70,21 +69,8 @@ export function AdvancedTools() {
           icon: Code2
         }
       ]
-    },
-    {
-      name: "Chat",
-      icon: MessageSquare,
-      isOpen: chatOpen,
-      setIsOpen: setChatOpen,
-      tools: [
-        {
-          name: "Chat",
-          path: "/chat",
-          icon: MessageSquare
-        }
-      ]
     }
-  ], [productTeamOpen, developerToolsOpen, chatOpen]);
+  ], [productTeamOpen, developerToolsOpen]);
 
   // Function to get the appropriate status icon
   const getStatusIcon = (docId?: string) => {
@@ -105,53 +91,73 @@ export function AdvancedTools() {
     }
   };
 
-  // Render category-based tool sections
+  // Render category-based tool sections following InitialSetup pattern
   return (
-    <SidebarGroup className="mt-6">
-      {toolCategories.map(category => {
-        const CategoryIcon = category.icon;
-        
-        return (
-          <Collapsible key={category.name} open={category.isOpen} onOpenChange={category.setIsOpen}>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="px-6 text-sm font-bold text-muted-foreground hover:text-foreground cursor-pointer flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <CategoryIcon className="h-4 w-4" />
-                  <span>{category.name}</span>
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${category.isOpen ? "rotate-180" : ""}`} />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {category.tools.map(tool => {
-                    const statusIcon = getStatusIcon(tool.docId);
-                    const IconComponent = tool.icon;
-                    
-                    return (
-                      <SidebarMenuItem key={tool.name}>
-                        <SidebarMenuButton asChild>
-                          <Link
-                            to={tool.path}
-                            className="flex items-center justify-between px-8 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <IconComponent className="h-5 w-5 stroke-[2.5]" />
+    <>
+      <SidebarMenu>
+        {/* Category dropdowns */}
+        {toolCategories.map(category => {
+          const CategoryIcon = category.icon;
+          
+          return (
+            <SidebarMenuItem key={category.name}>
+              <div className="px-6 py-2">
+                <Collapsible 
+                  open={category.isOpen} 
+                  onOpenChange={category.setIsOpen}
+                  className="w-full"
+                >
+                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
+                    <div className="flex items-center gap-2">
+                      <CategoryIcon className="h-4 w-4" />
+                      <span>{category.name}</span>
+                    </div>
+                    <ChevronRight className={`h-4 w-4 transition-transform ${category.isOpen ? 'rotate-90' : ''}`} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2">
+                    {category.tools.map(tool => {
+                      const statusIcon = getStatusIcon(tool.docId);
+                      const IconComponent = tool.icon;
+                      
+                      return (
+                        <SidebarMenuItem key={tool.name}>
+                          <SidebarMenuButton asChild>
+                            <Link 
+                              to={tool.path} 
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent relative group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <IconComponent className="h-5 w-5" />
+                              </div>
                               <span>{tool.name}</span>
-                            </div>
-                            {statusIcon}
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </Collapsible>
-        );
-      })}
-    </SidebarGroup>
+                              {statusIcon}
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+            </SidebarMenuItem>
+          );
+        })}
+
+        {/* Standalone Chat item */}
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link 
+              to="/chat" 
+              className="flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors hover:bg-sidebar-accent relative group"
+            >
+              <div className="flex items-center gap-3">
+                <MessageSquare className="h-5 w-5" />
+              </div>
+              <span>Chat</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </>
   );
 }

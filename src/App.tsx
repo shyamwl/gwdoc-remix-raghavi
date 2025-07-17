@@ -21,6 +21,7 @@ import BackendLogics from "./pages/BackendLogics";
 import AppFlow from "./pages/AppFlow";
 import ScreenDocs from "./pages/ScreenDocs";
 import ApiDocs from "./pages/ApiDocs";
+import DatabaseSchema from "./pages/DatabaseSchema";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/app-flow" element={<AppFlow />} />
             <Route path="/screen-docs" element={<ScreenDocs />} />
             <Route path="/api-docs" element={<ApiDocs />} />
+            <Route path="/database-schema" element={<DatabaseSchema />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

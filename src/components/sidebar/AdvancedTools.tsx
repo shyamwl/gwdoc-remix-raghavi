@@ -57,7 +57,7 @@ export function AdvancedTools() {
         docId: "api-documentation"
       }, "Validation", {
         name: "DB Schema",
-        path: "#",
+        path: "/database-schema",
         docId: "database-schema"
       }, {
         name: "Logic Charts",

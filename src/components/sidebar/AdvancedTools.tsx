@@ -78,7 +78,7 @@ export function AdvancedTools() {
   };
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className="mt-6">
       <SidebarGroupLabel className="px-6 text-sm font-medium text-muted-foreground">Tools</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
@@ -94,7 +94,7 @@ export function AdvancedTools() {
                     className="flex items-center justify-between px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <IconComponent className="h-5 w-5" />
+                      <IconComponent className="h-5 w-5 stroke-[2.5]" />
                       <span>{tool.name}</span>
                     </div>
                     {statusIcon}

@@ -37,12 +37,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-6 my-0">
-          <SidebarGroupLabel className="px-6 text-sm font-medium text-muted-foreground">Tools</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <AdvancedTools />
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <AdvancedTools />
       </SidebarContent>
     </Sidebar>
   );

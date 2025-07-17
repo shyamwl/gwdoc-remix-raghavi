@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Check, Calendar, User, GripVertical } from "lucide-react";
+import { Check, Calendar, User, GripVertical, Sparkles } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { format } from "date-fns";
@@ -28,6 +28,42 @@ export function StoriesTable({
   onStoryPointsChange,
   onReorderStories
 }: StoriesTableProps) {
+  // Fibonacci sequence for story points
+  const fibonacciPoints = [1, 2, 3, 5, 8, 13];
+  
+  // Auto-analyze story complexity and assign story points
+  const analyzeStory = (storyTitle: string) => {
+    const keywords = {
+      simple: ['fix', 'update', 'change', 'small', 'minor', 'quick'],
+      medium: ['add', 'create', 'implement', 'feature', 'enhance'],
+      complex: ['integrate', 'build', 'develop', 'system', 'architecture', 'migrate'],
+      veryComplex: ['refactor', 'redesign', 'overhaul', 'complex', 'multiple', 'advanced']
+    };
+    
+    const text = storyTitle.toLowerCase();
+    
+    if (keywords.veryComplex.some(word => text.includes(word))) {
+      return 13;
+    } else if (keywords.complex.some(word => text.includes(word))) {
+      return 8;
+    } else if (keywords.medium.some(word => text.includes(word))) {
+      return Math.random() > 0.5 ? 3 : 5;
+    } else {
+      return Math.random() > 0.5 ? 1 : 2;
+    }
+  };
+  
+  // Get color based on story points
+  const getStoryPointColor = (points: number) => {
+    if (points <= 2) return 'text-green-600 bg-green-50 border-green-200';
+    if (points <= 5) return 'text-orange-600 bg-orange-50 border-orange-200';
+    return 'text-red-600 bg-red-50 border-red-200';
+  };
+  
+  // Calculate estimated days (1 story point ≈ 0.75-1 day)
+  const getEstimatedDays = (points: number) => {
+    return Math.max(1, Math.round(points * 0.85));
+  };
   const handleDragStart = (e: React.DragEvent<HTMLTableRowElement>, story: UserStory) => {
     e.dataTransfer.setData('storyId', story.id);
     e.currentTarget.classList.add('opacity-50');
@@ -158,30 +194,67 @@ export function StoriesTable({
                 </Popover>
               </TableCell>
               <TableCell>
-                <Input
-                  type="number"
-                  min="1"
-                  placeholder="Points"
-                  value={story.storyPoints ?? ""}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    onStoryPointsChange(story.id, e.target.value);
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-20"
-                />
+                <div className="flex items-center gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className={`min-w-16 border-2 ${story.storyPoints ? getStoryPointColor(story.storyPoints) : 'border-dashed'}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {story.storyPoints || "?"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-2" align="start">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Sparkles className="h-4 w-4 text-blue-500" />
+                          <span className="text-sm font-medium">Story Points</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-1">
+                          {fibonacciPoints.map((point) => (
+                            <Button
+                              key={point}
+                              variant={story.storyPoints === point ? "default" : "outline"}
+                              size="sm"
+                              className={`h-8 text-xs ${getStoryPointColor(point)}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onStoryPointsChange(story.id, point.toString());
+                              }}
+                            >
+                              {point}
+                            </Button>
+                          ))}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full gap-2 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const autoPoints = analyzeStory(story.title);
+                            onStoryPointsChange(story.id, autoPoints.toString());
+                          }}
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          Auto-analyze
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </TableCell>
               <TableCell>
                 {story.storyPoints && story.storyPoints > 0 && (
                   <div className="text-sm">
                     <span className="font-medium">
-                      {story.storyPoints <= 10 ? Math.ceil(story.storyPoints * 0.5) : 
-                       story.storyPoints <= 20 ? Math.ceil(story.storyPoints * 0.8) : 
-                       Math.ceil(story.storyPoints * 1.2)} days
+                      {getEstimatedDays(story.storyPoints)} {getEstimatedDays(story.storyPoints) === 1 ? 'day' : 'days'}
                     </span>
                     <div className="text-muted-foreground text-xs">
-                      {story.storyPoints <= 10 ? 'Quick task' : 
-                       story.storyPoints <= 20 ? 'Standard sprint' : 'Extended effort'}
+                      {story.storyPoints <= 2 ? 'Quick task' : 
+                       story.storyPoints <= 5 ? 'Standard task' : 'Complex task'}
                     </div>
                   </div>
                 )}

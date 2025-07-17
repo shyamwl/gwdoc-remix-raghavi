@@ -1,9 +1,10 @@
 
-import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, Shield, MessageSquare } from "lucide-react";
+import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, Shield, MessageSquare, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useDocumentGeneration } from "@/context/DocumentGenerationContext";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 // Map document IDs to sidebar item paths
 const documentToSidebarMap: Record<string, string> = {
@@ -19,6 +20,7 @@ const documentToSidebarMap: Record<string, string> = {
 
 export function AdvancedTools() {
   const { documentStatus, isGeneratingDocuments } = useDocumentGeneration();
+  const [isOpen, setIsOpen] = useState(false);
 
   // Tools with icons
   const tools = useMemo(() => [
@@ -79,32 +81,41 @@ export function AdvancedTools() {
 
   return (
     <SidebarGroup className="mt-6">
-      <SidebarGroupLabel className="px-6 text-sm font-medium text-muted-foreground">Tools</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {tools.map(tool => {
-            const statusIcon = getStatusIcon(tool.docId);
-            const IconComponent = tool.icon;
-            
-            return (
-              <SidebarMenuItem key={tool.name}>
-                <SidebarMenuButton asChild>
-                  <Link
-                    to={tool.path}
-                    className="flex items-center justify-between px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <IconComponent className="h-5 w-5 stroke-[2.5]" />
-                      <span>{tool.name}</span>
-                    </div>
-                    {statusIcon}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-      </SidebarGroupContent>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger asChild>
+          <SidebarGroupLabel className="px-6 text-sm font-bold text-muted-foreground hover:text-foreground cursor-pointer flex items-center justify-between">
+            Tools
+            <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          </SidebarGroupLabel>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {tools.map(tool => {
+                const statusIcon = getStatusIcon(tool.docId);
+                const IconComponent = tool.icon;
+                
+                return (
+                  <SidebarMenuItem key={tool.name}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        to={tool.path}
+                        className="flex items-center justify-between px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <IconComponent className="h-5 w-5 stroke-[2.5]" />
+                          <span>{tool.name}</span>
+                        </div>
+                        {statusIcon}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </CollapsibleContent>
+      </Collapsible>
     </SidebarGroup>
   );
 }

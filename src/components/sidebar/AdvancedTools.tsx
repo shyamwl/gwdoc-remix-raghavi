@@ -105,6 +105,7 @@ export function AdvancedTools() {
     }
   };
 
+  // Render category-based tool sections
   return (
     <SidebarGroup className="mt-6">
       {toolCategories.map(category => {

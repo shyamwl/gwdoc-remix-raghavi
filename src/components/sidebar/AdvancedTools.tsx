@@ -1,7 +1,7 @@
 
-import { Clock, Loader2, CheckCircle } from "lucide-react";
+import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, Shield, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "@/components/ui/sidebar";
 import { useDocumentGeneration } from "@/context/DocumentGenerationContext";
 import { useMemo } from "react";
 
@@ -20,35 +20,41 @@ const documentToSidebarMap: Record<string, string> = {
 export function AdvancedTools() {
   const { documentStatus, isGeneratingDocuments } = useDocumentGeneration();
 
-  // Simple flat list of tools as requested
+  // Tools with icons
   const tools = useMemo(() => [
     {
       name: "User Stories",
       path: "/user-stories",
-      docId: "user-stories"
+      docId: "user-stories",
+      icon: FileText
     },
     {
       name: "Test Cases",
       path: "#",
-      docId: "test-cases"
+      docId: "test-cases",
+      icon: TestTube
     },
     {
       name: "DB Schema",
       path: "/database-schema",
-      docId: "database-schema"
+      docId: "database-schema",
+      icon: Database
     },
     {
       name: "API Docs",
       path: "/api-docs",
-      docId: "api-documentation"
+      docId: "api-documentation",
+      icon: Code2
     },
     {
       name: "Validation",
-      path: "#"
+      path: "#",
+      icon: Shield
     },
     {
       name: "Chat",
-      path: "/chat"
+      path: "/chat",
+      icon: MessageSquare
     }
   ], []);
 
@@ -72,24 +78,33 @@ export function AdvancedTools() {
   };
 
   return (
-    <SidebarMenu>
-      {tools.map(tool => {
-        const statusIcon = getStatusIcon(tool.docId);
-        
-        return (
-          <SidebarMenuItem key={tool.name}>
-            <SidebarMenuButton asChild>
-              <Link
-                to={tool.path}
-                className="flex items-center justify-between px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <span>{tool.name}</span>
-                {statusIcon}
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        );
-      })}
-    </SidebarMenu>
+    <SidebarGroup>
+      <SidebarGroupLabel className="px-6 text-sm font-medium text-muted-foreground">Tools</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {tools.map(tool => {
+            const statusIcon = getStatusIcon(tool.docId);
+            const IconComponent = tool.icon;
+            
+            return (
+              <SidebarMenuItem key={tool.name}>
+                <SidebarMenuButton asChild>
+                  <Link
+                    to={tool.path}
+                    className="flex items-center justify-between px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <IconComponent className="h-5 w-5" />
+                      <span>{tool.name}</span>
+                    </div>
+                    {statusIcon}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 }

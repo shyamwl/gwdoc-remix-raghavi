@@ -161,7 +161,7 @@ export function StoriesTable({
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
-                    min="0"
+                    min="1"
                     placeholder="Points"
                     value={story.storyPoints ?? ""}
                     onChange={(e) => {
@@ -171,22 +171,26 @@ export function StoriesTable({
                     onClick={(e) => e.stopPropagation()}
                     className="w-20"
                   />
-                  {story.storyPoints && (
+                  {story.storyPoints && story.storyPoints > 0 && (
                     <span className="text-sm text-muted-foreground">
-                      {story.storyPoints === 1 ? 'Simple' : 
-                       story.storyPoints <= 3 ? 'Medium' : 
-                       story.storyPoints <= 5 ? 'Complex' : 'Very Complex'}
+                      {story.storyPoints <= 10 ? 'Simple' : 
+                       story.storyPoints <= 20 ? 'Medium' : 
+                       story.storyPoints <= 30 ? 'Complex' : 'Very Complex'}
                     </span>
                   )}
                 </div>
               </TableCell>
               <TableCell>
-                {story.storyPoints && (
+                {story.storyPoints && story.storyPoints > 0 && (
                   <div className="text-sm">
-                    <span className="font-medium">{story.storyPoints * 2} days</span>
+                    <span className="font-medium">
+                      {story.storyPoints <= 10 ? Math.ceil(story.storyPoints * 0.5) : 
+                       story.storyPoints <= 20 ? Math.ceil(story.storyPoints * 0.8) : 
+                       Math.ceil(story.storyPoints * 1.2)} days
+                    </span>
                     <div className="text-muted-foreground text-xs">
-                      {story.storyPoints <= 2 ? 'Quick task' : 
-                       story.storyPoints <= 5 ? 'Standard sprint' : 'Multi-sprint'}
+                      {story.storyPoints <= 10 ? 'Quick task' : 
+                       story.storyPoints <= 20 ? 'Standard sprint' : 'Extended effort'}
                     </div>
                   </div>
                 )}

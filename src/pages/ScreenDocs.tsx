@@ -58,7 +58,7 @@ export default function ScreenDocs() {
         "https://gw-runpod-storyboard.s3.amazonaws.com/main_screen_1_the_home_screen_provides_an_overview_of_available_products_and_categories_featuring_a_location_selector_search_bar_notification_icon_promotional_banner_category_icons_flash_sale_section_product_listings_and_a_bottom_navigation_bar.png",
       description: "Home Screen",
       parentId: null,
-      isExpanded: false,
+      isExpanded: true,
       generationStatus: "in-progress",
       fullDocumentation: `# Home Screen
   
@@ -517,6 +517,26 @@ export default function ScreenDocs() {
   `,
       displayedDocumentation: "",
     },
+    {
+      id: "9",
+      image: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?auto=format&fit=crop&w=300&h=200",
+      description: "Home Screen - Search Modal",
+      parentId: "1",
+      isExpanded: false,
+      generationStatus: "pending",
+      fullDocumentation: "Sub-screen documentation for Home Search Modal",
+      displayedDocumentation: "",
+    },
+    {
+      id: "10", 
+      image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=300&h=200",
+      description: "Product Details - Size Guide",
+      parentId: "4",
+      isExpanded: false,
+      generationStatus: "pending", 
+      fullDocumentation: "Sub-screen documentation for Product Size Guide",
+      displayedDocumentation: "",
+    },
   ]);
 
   const [selectedScreen, setSelectedScreen] = useState<string>("1");
@@ -857,13 +877,18 @@ export default function ScreenDocs() {
                       .map((subScreen) => (
                         <div
                           key={subScreen.id}
-                          className={`p-4 border-b last:border-b-0 pl-8 ${
+                          className={`p-4 border-b last:border-b-0 bg-blue-50 ${
                             selectedScreen === subScreen.id
-                              ? "bg-muted"
-                              : "bg-background"
+                              ? "bg-blue-100"
+                              : ""
                           }`}
+                          style={{ marginLeft: "12px" }}
                           onClick={() => setSelectedScreen(subScreen.id)}
                         >
+                          <div className="flex items-center gap-2 mb-2">
+                            <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">subscreen</span>
+                          </div>
                           <div className="flex items-start gap-4">
                             <img
                               src={subScreen.image}

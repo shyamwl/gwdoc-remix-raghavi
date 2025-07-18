@@ -51,16 +51,16 @@ const Pricing = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 relative z-50">
           <h1 className="text-4xl font-bold text-foreground mb-6">Choose a plan</h1>
           
-          <div className="flex items-center justify-center gap-2 mb-12 relative z-50">
+          <div className="flex items-center justify-center gap-2 mb-12">
             <span className="text-muted-foreground">Team size</span>
             <Select value={teamSize} onValueChange={setTeamSize}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40 relative z-50">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="z-50">
+              <SelectContent className="z-[100] bg-popover border shadow-lg">
                 {[1,2,3,4,5,10,15,20,30,50].map(num => (
                   <SelectItem key={num} value={num.toString()}>
                     {num} {num === 1 ? 'member' : 'members'}

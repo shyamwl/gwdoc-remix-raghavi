@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Send, Mic, MicOff, Plus } from "lucide-react";
+import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 // Type declarations for Web Speech API
@@ -43,6 +43,12 @@ interface Message {
   content: string;
   sender: "user" | "ai";
   timestamp: Date;
+  attachments?: {
+    name: string;
+    size: number;
+    type: string;
+    url: string;
+  }[];
 }
 
 const Chat = () => {
@@ -55,9 +61,11 @@ const Chat = () => {
     },
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const scrollToBottom = () => {
@@ -102,24 +110,83 @@ const Chat = () => {
     }
   }, []);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const maxSize = 10 * 1024 * 1024; // 10MB limit
+    const allowedTypes = ['image/', 'text/', 'application/pdf', 'application/json'];
+    
+    const validFiles = files.filter(file => {
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: `${file.name} is larger than 10MB`,
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      const isValidType = allowedTypes.some(type => file.type.startsWith(type));
+      if (!isValidType) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not a supported file type`,
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      return true;
+    });
+    
+    if (validFiles.length > 0) {
+      setSelectedFiles(prev => [...prev, ...validFiles]);
+      toast({
+        title: "Files selected",
+        description: `${validFiles.length} file(s) ready to send`,
+      });
+    }
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() && selectedFiles.length === 0) return;
+
+    // Create file attachments
+    const attachments = selectedFiles.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file), // In a real app, you'd upload to a server
+    }));
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: inputValue,
+      content: inputValue || "📎 File attachment",
       sender: "user",
       timestamp: new Date(),
+      attachments: attachments.length > 0 ? attachments : undefined,
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInputValue("");
+    setSelectedFiles([]);
     setIsTyping(true);
 
     // Simulate AI response
     setTimeout(() => {
-      const aiResponse = generateAIResponse(inputValue);
+      const aiResponse = attachments.length > 0 
+        ? `I can see you've shared ${attachments.length} file(s). I can help analyze documents, images, and other files to assist with your GravityDoc project. ${generateAIResponse(inputValue)}`
+        : generateAIResponse(inputValue);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: aiResponse,
@@ -187,6 +254,20 @@ const Chat = () => {
     }
   };
 
+  const getFileIcon = (fileType: string) => {
+    if (fileType.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (fileType.startsWith('text/') || fileType === 'application/json') return <FileText className="h-4 w-4" />;
+    return <File className="h-4 w-4" />;
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   return (
     <main className="flex-1 flex flex-col bg-background">
       {/* Chat Header */}
@@ -233,6 +314,28 @@ const Chat = () => {
                   </span>
                 </div>
                 <p className="text-sm whitespace-pre-line">{message.content}</p>
+                
+                {/* Display attachments */}
+                {message.attachments && message.attachments.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {message.attachments.map((attachment, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 bg-white/50 rounded border">
+                        {getFileIcon(attachment.type)}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium truncate">{attachment.name}</p>
+                          <p className="text-xs text-muted-foreground">{formatFileSize(attachment.size)}</p>
+                        </div>
+                        {attachment.type.startsWith('image/') && (
+                          <img
+                            src={attachment.url}
+                            alt={attachment.name}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {message.sender === "user" && (
@@ -270,13 +373,54 @@ const Chat = () => {
       {/* Chat Input */}
       <div className="border-t bg-background p-4">
         <div className="mx-auto max-w-4xl">
+          {/* Selected Files Preview */}
+          {selectedFiles.length > 0 && (
+            <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">
+                  {selectedFiles.length} file(s) selected
+                </span>
+              </div>
+              <div className="space-y-2">
+                {selectedFiles.map((file, index) => (
+                  <div key={index} className="flex items-center gap-2 p-2 bg-white rounded border">
+                    {getFileIcon(file.type)}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">{file.name}</p>
+                      <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeFile(index)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
           <form onSubmit={handleSendMessage} className="flex gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+              accept="image/*,text/*,.pdf,.json"
+            />
+            
             <Button
               type="button"
               variant="outline"
               size="icon"
               className="flex-shrink-0"
-              title="Add attachment (coming soon)"
+              onClick={() => fileInputRef.current?.click()}
+              title="Add file attachment"
             >
               <Plus className="h-4 w-4" />
             </Button>

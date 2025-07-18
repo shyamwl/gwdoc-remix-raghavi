@@ -61,7 +61,7 @@ export function ScreensList({
           {isSubScreen && (
             <div className="flex items-center gap-2 mb-2">
               <ChevronRight className="h-3 w-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Sub-screen</span>
+              <span className="text-xs text-muted-foreground">subscreen</span>
             </div>
           )}
           <ScreenItemCard

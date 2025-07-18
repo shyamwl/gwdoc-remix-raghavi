@@ -48,22 +48,30 @@ const Pricing = () => {
   const isEnterprise = parseInt(teamSize) >= 30;
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-20">
+    <div className="min-h-screen bg-background overflow-visible">
+      <div className="max-w-7xl mx-auto p-6 overflow-visible">
+        {/* Header Section with higher z-index */}
+        <div className="text-center mb-20 relative z-[100] overflow-visible">
           <h1 className="text-4xl font-bold text-foreground mb-8">Choose a plan</h1>
           
-          <div className="flex items-center justify-center gap-2 mb-16">
+          <div className="flex items-center justify-center gap-2 mb-16 relative overflow-visible">
             <span className="text-muted-foreground">Team size</span>
-            <div className="relative">
+            <div className="relative overflow-visible">
               <Select value={teamSize} onValueChange={setTeamSize}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-40 bg-background border shadow-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[9999] bg-popover border shadow-xl" sideOffset={5}>
+                <SelectContent 
+                  className="z-[999] bg-background border shadow-2xl rounded-lg overflow-visible animate-in fade-in-0 zoom-in-95" 
+                  sideOffset={8}
+                  align="center"
+                >
                   {[1,2,3,4,5,10,15,20,30,50].map(num => (
-                    <SelectItem key={num} value={num.toString()}>
+                    <SelectItem 
+                      key={num} 
+                      value={num.toString()}
+                      className="cursor-pointer hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    >
                       {num} {num === 1 ? 'member' : 'members'}
                     </SelectItem>
                   ))}
@@ -73,7 +81,7 @@ const Pricing = () => {
           </div>
         </div>
 
-        {/* Pricing Cards */}
+        {/* Pricing Cards with lower z-index */}
         <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12 relative z-10">
           {/* Free Plan */}
           <Card className="relative border-border bg-card">

@@ -107,11 +107,8 @@ export function AdvancedTools() {
                   onOpenChange={category.setIsOpen}
                   className="w-full"
                 >
-                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                    <div className="flex items-center gap-2">
-                      <CategoryIcon className="h-4 w-4" />
-                      <span>{category.name}</span>
-                    </div>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-normal">
+                    <span>{category.name}</span>
                     <ChevronRight className={`h-4 w-4 transition-transform ${category.isOpen ? 'rotate-90' : ''}`} />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-2">

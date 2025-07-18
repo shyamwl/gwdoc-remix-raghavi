@@ -51,28 +51,30 @@ const Pricing = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16 relative z-50">
-          <h1 className="text-4xl font-bold text-foreground mb-6">Choose a plan</h1>
+        <div className="text-center mb-20">
+          <h1 className="text-4xl font-bold text-foreground mb-8">Choose a plan</h1>
           
-          <div className="flex items-center justify-center gap-2 mb-12">
+          <div className="flex items-center justify-center gap-2 mb-16">
             <span className="text-muted-foreground">Team size</span>
-            <Select value={teamSize} onValueChange={setTeamSize}>
-              <SelectTrigger className="w-40 relative z-50">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="z-[100] bg-popover border shadow-lg">
-                {[1,2,3,4,5,10,15,20,30,50].map(num => (
-                  <SelectItem key={num} value={num.toString()}>
-                    {num} {num === 1 ? 'member' : 'members'}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Select value={teamSize} onValueChange={setTeamSize}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-[9999] bg-popover border shadow-xl" sideOffset={5}>
+                  {[1,2,3,4,5,10,15,20,30,50].map(num => (
+                    <SelectItem key={num} value={num.toString()}>
+                      {num} {num === 1 ? 'member' : 'members'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12 relative z-10">
           {/* Free Plan */}
           <Card className="relative border-border bg-card">
             <CardHeader className="text-center pb-4">

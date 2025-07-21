@@ -29,7 +29,6 @@ const Pricing = () => {
   ];
 
   const enterpriseFeatures = [
-     "Custom Pricing",
      "For large-scale teams & organizations",
     "Unlimited Epics",
     "Custom Seat Package",

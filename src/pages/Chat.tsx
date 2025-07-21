@@ -417,9 +417,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[280px_1fr] gap-4 h-[calc(100vh-8rem)] w-full">
-      {/* Conversation Sidebar */}
-      <aside className="chat-sidebar overflow-y-auto border-r border-border bg-background">
+    <div className="flex gap-4 h-[calc(100vh-8rem)] w-full overflow-hidden">
+      {/* Chat List (Conversations) - Fixed width */}
+      <aside className="flex-shrink-0 w-80 min-w-80 overflow-y-auto border-r border-border bg-background">
         <ConversationSidebar
           conversations={conversations}
           activeConversationId={activeConversationId}
@@ -431,10 +431,10 @@ const Chat = () => {
         />
       </aside>
 
-      {/* Main Chat Area */}
-      <main className="chat-window flex flex-col overflow-hidden bg-background min-w-0">
+      {/* Assistant Panel (Chat Body) - Flexible width */}
+      <main className="flex-1 flex flex-col overflow-hidden bg-background min-w-0">
         {/* Chat Header */}
-        <header className="border-b p-4 bg-background">
+        <header className="border-b p-4 bg-background flex-shrink-0">
           <div className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-primary" />
             <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
@@ -482,40 +482,31 @@ const Chat = () => {
                 {message.attachments && message.attachments.length > 0 && (
                   <div className="mt-2 space-y-2">
                     {message.attachments.map((attachment, index) => (
-                      <div key={index} className="flex items-center gap-2 p-2 bg-white/50 rounded border">
+                      <div key={index} className="flex items-center gap-2 p-2 bg-white rounded border text-xs">
                         {getFileIcon(attachment.type)}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium truncate">{attachment.name}</p>
-                          <p className="text-xs text-muted-foreground">{formatFileSize(attachment.size)}</p>
-                        </div>
-                        {attachment.type.startsWith('image/') && (
-                          <img
-                            src={attachment.url}
-                            alt={attachment.name}
-                            className="w-8 h-8 object-cover rounded"
-                          />
-                        )}
+                        <span className="font-medium">{attachment.name}</span>
+                        <span className="text-gray-500">({formatFileSize(attachment.size)})</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-
+              
               {message.sender === "user" && (
-                <div className="h-8 w-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center flex-shrink-0">
-                  <MessageSquare className="h-4 w-4" />
+                <div className="h-8 w-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center flex-shrink-0">
+                  U
                 </div>
               )}
             </div>
           ))}
           
-          {/* Typing Indicator */}
+          {/* AI Typing Indicator */}
           {isTyping && (
             <div className="flex gap-3 justify-start">
               <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
                 <MessageSquare className="h-4 w-4" />
               </div>
-              <div className="bg-blue-50 text-blue-900 rounded-lg rounded-bl-none p-4 max-w-[70%]">
+              <div className="bg-blue-50 text-blue-900 rounded-lg rounded-bl-none p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-medium">GravityDoc</span>
                   <span className="text-xs text-muted-foreground">typing...</span>
@@ -534,84 +525,84 @@ const Chat = () => {
         </div>
 
         {/* Chat Input */}
-        <div className="border-t bg-background p-4">
+        <div className="border-t bg-background p-4 flex-shrink-0">
           <div className="mx-auto max-w-4xl">
-          {/* Selected Files Preview */}
-          {selectedFiles.length > 0 && (
-            <div className="mb-3 p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">
-                  {selectedFiles.length} file(s) selected
-                </span>
-              </div>
-              <div className="space-y-2">
-                {selectedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-white rounded border">
-                    {getFileIcon(file.type)}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate">{file.name}</p>
-                      <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+            {/* Selected Files Preview */}
+            {selectedFiles.length > 0 && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    {selectedFiles.length} file(s) selected
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center gap-2 p-2 bg-white rounded border">
+                      {getFileIcon(file.type)}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{file.name}</p>
+                        <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(index)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFile(index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          
-          <form onSubmit={handleSendMessage} className="flex gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              onChange={handleFileSelect}
-              className="hidden"
-              accept="image/*,text/*,.pdf,.json"
-            />
+            )}
             
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="flex-shrink-0"
-              onClick={() => fileInputRef.current?.click()}
-              title="Add file attachment"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-            
-            <Input
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-1"
-              placeholder="Type your message or use voice input..."
-            />
-            
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={handleVoiceInput}
-              className={`flex-shrink-0 ${
-                isListening ? "bg-red-100 text-red-600 border-red-200" : ""
-              }`}
-              title={isListening ? "Stop listening" : "Voice input"}
-            >
-              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-            </Button>
-            
-            <Button type="submit" className="flex-shrink-0">
-              <Send className="h-4 w-4" />
-            </Button>
+            <form onSubmit={handleSendMessage} className="flex items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                accept="image/*,text/*,.pdf,.json"
+              />
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="flex-shrink-0 h-10 w-10"
+                onClick={() => fileInputRef.current?.click()}
+                title="Add file attachment"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+              
+              <Input
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-1 h-10"
+                placeholder="Type your message or use voice input..."
+              />
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={handleVoiceInput}
+                className={`flex-shrink-0 h-10 w-10 ${
+                  isListening ? "bg-red-100 text-red-600 border-red-200" : ""
+                }`}
+                title={isListening ? "Stop listening" : "Voice input"}
+              >
+                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
+              
+              <Button type="submit" className="flex-shrink-0 h-10 px-4">
+                <Send className="h-4 w-4" />
+              </Button>
             </form>
           </div>
         </div>

@@ -9,35 +9,34 @@ const Pricing = () => {
   const [teamSize, setTeamSize] = useState("1");
 
   const freeFeatures = [
-    "Upload UI mockups or wireframes",
-    "Auto-generate User Stories, Test Cases, API Docs",
-    "Community collaboration (public boards)",
-    "Export to JPG / PDF",
-    "Limited monthly usage",
-    "Basic Chat feature",
-    "Email support only"
+    "Perfect for beginners",
+    "1 Epic",
+    "UnLimited Seats",
+    "1 Project",
+    "Limited features",
+    "❌ Cannot regenerate",
+    "Regular support"
   ];
 
   const proFeatures = [
-    "All Free features",
-    "Unlimited document generation",
-    "Private & team boards",
-    "Advanced AI story generation",
-    "AI-generated acceptance criteria",
-    "Voice-enabled chat with GravityDoc",
-    "Priority email & chat support",
-    "Integration with GitHub, JIRA"
+    "Perfect for advanced users",
+    "5 Epics/month per seat",
+    "Billed per seat",
+    "Unlimited Projects",
+    "All features and tools unlocked",
+    "✅ Allowed (up to 3 times per item)",
+    "Premium Support"
   ];
 
   const enterpriseFeatures = [
-    "All Pro features",
-    "SSO + advanced security options",
-    "Custom workflows & AI training",
-    "Organization-level roles/permissions",
-    "Dedicated account manager",
-    "Premium 24/7 support & SLAs",
-    "Private cloud deployment (optional)",
-    "GDPR, SOC2-ready compliance"
+     "Custom Pricing",
+     "For large-scale teams & organizations",
+    "Unlimited Epics",
+    "Custom Seat Package",
+    "Unlimited Projects",
+    "All features and tools unlocked",
+    "✅ Unlimited Regeneration",
+    "Priority Support"
   ];
 
   const calculateProPrice = (members: string) => {

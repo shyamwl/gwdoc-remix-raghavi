@@ -232,6 +232,16 @@ const Chat = () => {
       url: URL.createObjectURL(file), // In a real app, you'd upload to a server
     }));
 
+    // Include selected documents context in the message
+    const selectedDocumentContext = Array.from(selectedDocuments)
+      .map(docId => documentOptions.find(d => d.id === docId)?.label)
+      .filter(Boolean)
+      .join(", ");
+
+    const contextPrefix = selectedDocuments.size > 0 
+      ? `[Context: ${selectedDocumentContext}] ` 
+      : "";
+
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue || "📎 File attachment",
@@ -252,11 +262,13 @@ const Chat = () => {
       updateConversationTitle(activeConversationId, title || "New Chat");
     }
 
-    // Simulate AI response
+    // Simulate AI response with document context awareness
     setTimeout(() => {
-      const aiResponse = attachments.length > 0 
-        ? `I can see you've shared ${attachments.length} file(s). I can help analyze documents, images, and other files to assist with your GravityDoc project. ${generateAIResponse(inputValue)}`
-        : generateAIResponse(inputValue);
+      const aiResponse = generateAIResponseWithContext(
+        inputValue, 
+        attachments, 
+        selectedDocumentContext
+      );
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -283,6 +295,43 @@ const Chat = () => {
         ));
       }
     }, 1500);
+  };
+
+  const generateAIResponseWithContext = (userInput: string, attachments: any[], selectedContext: string): string => {
+    const input = userInput.toLowerCase();
+    
+    // Context-aware responses
+    if (selectedContext) {
+      if (selectedContext.includes("API Documentation")) {
+        if (input.includes("add") || input.includes("create")) {
+          return `I'll help you add new content to your API Documentation. Based on your selected context (${selectedContext}), I can help you add new endpoints, update authentication methods, or enhance existing API documentation. What specific API changes would you like me to implement?`;
+        }
+        if (input.includes("review") || input.includes("change")) {
+          return `I'll review your API Documentation and suggest improvements. I can help you update endpoint descriptions, add new examples, improve authentication flows, or restructure the documentation for better clarity. What specific changes would you like me to make to the API docs?`;
+        }
+      }
+      
+      if (selectedContext.includes("App Flow")) {
+        return `I'll help you with your App Flow documentation. Based on your request and the selected context (${selectedContext}), I can help you modify user journeys, update wireframes, or enhance the application flow documentation. What specific changes would you like me to implement?`;
+      }
+      
+      if (selectedContext.includes("Screenwise Docs")) {
+        return `I'll assist with your Screenwise Documentation. With the context you've selected (${selectedContext}), I can help you update screen descriptions, modify UI components, or enhance the screen-by-screen documentation. What changes would you like me to make?`;
+      }
+      
+      if (selectedContext.includes("User Stories")) {
+        return `I'll help you with your User Stories. Based on your selected context (${selectedContext}), I can help you create new user stories, modify existing ones, or reorganize your user story documentation. What specific user story changes would you like me to implement?`;
+      }
+      
+      if (selectedContext.includes("Backend Logic")) {
+        return `I'll assist with your Backend Logic documentation. With the context you've selected (${selectedContext}), I can help you document new backend processes, update API logic, or enhance the technical documentation. What backend changes would you like me to implement?`;
+      }
+      
+      return `I understand you want to work with your ${selectedContext} documentation. I'm here to help you make changes, add new content, or improve the existing documentation. Could you provide more specific details about what you'd like me to modify?`;
+    }
+    
+    // Fallback to general responses if no context
+    return generateAIResponse(userInput);
   };
 
   const generateAIResponse = (userInput: string): string => {

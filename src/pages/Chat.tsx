@@ -665,6 +665,40 @@ const Chat = () => {
                 placeholder="Type your message or use voice input..."
               />
               
+              {/* Document Selection Dropdown for AI Editing */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="flex-shrink-0 h-10 px-3 text-sm"
+                    title="Select documents to edit with AI"
+                  >
+                    Select documents
+                    <ChevronDown className="h-4 w-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  {documentOptions.map((document) => (
+                    <DropdownMenuItem key={document.id} asChild>
+                      <div
+                        className="flex items-center gap-2 cursor-pointer p-2"
+                        onClick={() => toggleDocument(document.id)}
+                      >
+                        <div className="flex items-center gap-2 flex-1">
+                          {document.icon}
+                          <span className="text-sm">{document.label}</span>
+                        </div>
+                        {selectedDocuments.has(document.id) && (
+                          <Check className="h-4 w-4 text-primary" />
+                        )}
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <Button
                 type="button"
                 variant="outline"

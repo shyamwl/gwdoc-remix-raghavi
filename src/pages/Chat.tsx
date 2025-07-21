@@ -57,6 +57,7 @@ interface Message {
     type: string;
     url: string;
   }[];
+  documentContext?: string[]; // Add this to track which documents were used as context
 }
 
 interface DocumentOption {
@@ -233,14 +234,9 @@ const Chat = () => {
     }));
 
     // Include selected documents context in the message
-    const selectedDocumentContext = Array.from(selectedDocuments)
+    const selectedDocumentLabels = Array.from(selectedDocuments)
       .map(docId => documentOptions.find(d => d.id === docId)?.label)
-      .filter(Boolean)
-      .join(", ");
-
-    const contextPrefix = selectedDocuments.size > 0 
-      ? `[Context: ${selectedDocumentContext}] ` 
-      : "";
+      .filter(Boolean);
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -248,6 +244,7 @@ const Chat = () => {
       sender: "user",
       timestamp: new Date(),
       attachments: attachments.length > 0 ? attachments : undefined,
+      documentContext: selectedDocumentLabels.length > 0 ? selectedDocumentLabels : undefined,
     };
 
     const updatedMessages = [...messages, userMessage];
@@ -264,6 +261,7 @@ const Chat = () => {
 
     // Simulate AI response with document context awareness
     setTimeout(() => {
+      const selectedDocumentContext = selectedDocumentLabels.join(", ");
       const aiResponse = generateAIResponseWithContext(
         inputValue, 
         attachments, 
@@ -558,6 +556,17 @@ const Chat = () => {
                     })}
                   </span>
                 </div>
+                
+                {/* Show document context for user messages */}
+                {message.sender === "user" && message.documentContext && message.documentContext.length > 0 && (
+                  <div className="mb-2 pb-2 border-b border-gray-300">
+                    <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-200 px-2 py-1 rounded">
+                      <FileText className="h-3 w-3" />
+                      <span>Context: {message.documentContext.join(", ")}</span>
+                    </div>
+                  </div>
+                )}
+                
                 <p className="text-sm whitespace-pre-line">{message.content}</p>
                 
                 {/* Display attachments */}
@@ -581,6 +590,7 @@ const Chat = () => {
               )}
             </div>
           ))}
+          
           
           {/* AI Typing Indicator */}
           {isTyping && (
@@ -743,18 +753,23 @@ const Chat = () => {
               </Button>
             </form>
             
-            {/* Selected Documents Display */}
+            {/* Selected Documents Display - Enhanced */}
             {selectedDocuments.size > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2 p-2 bg-muted/50 rounded-md">
-                <span className="text-xs text-muted-foreground">Context:</span>
-                {Array.from(selectedDocuments).map(docId => {
-                  const doc = documentOptions.find(d => d.id === docId);
-                  return doc ? (
-                    <span key={docId} className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
-                      {doc.label}
-                    </span>
-                  ) : null;
-                })}
+              <div className="flex flex-wrap gap-1 mt-2 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-md border border-primary/20">
+                <div className="flex items-center gap-2 w-full mb-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">Documents will be sent as context:</span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {Array.from(selectedDocuments).map(docId => {
+                    const doc = documentOptions.find(d => d.id === docId);
+                    return doc ? (
+                      <span key={docId} className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full border border-primary/30">
+                        {doc.label}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
               </div>
             )}
           </div>

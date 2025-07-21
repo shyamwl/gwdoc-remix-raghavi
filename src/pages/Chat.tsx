@@ -2,9 +2,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File } from "lucide-react";
+import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File, ChevronDown, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { ConversationSidebar, type Conversation } from "@/components/chat/ConversationSidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Type declarations for Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -52,10 +58,30 @@ interface Message {
   }[];
 }
 
+interface DocumentOption {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
 const Chat = () => {
+  // Document options for context selection
+  const documentOptions: DocumentOption[] = [
+    { id: "app-flow", label: "App Flow", icon: <FileText className="h-4 w-4" /> },
+    { id: "screen-docs", label: "Screenwise Docs", icon: <Image className="h-4 w-4" /> },
+    { id: "api-docs", label: "API Documentation", icon: <FileText className="h-4 w-4" /> },
+    { id: "backend-logic", label: "Backend Logic", icon: <File className="h-4 w-4" /> },
+    { id: "user-stories", label: "User Stories", icon: <FileText className="h-4 w-4" /> },
+  ];
+
   // Conversation state
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  
+  // Document selection state - default to app flow & screenwise docs
+  const [selectedDocuments, setSelectedDocuments] = useState<Set<string>>(
+    new Set(["app-flow", "screen-docs"])
+  );
   
   // Message state
   const [messages, setMessages] = useState<Message[]>([
@@ -416,17 +442,82 @@ const Chat = () => {
     });
   };
 
+  // Document selection functions
+  const toggleDocument = (documentId: string) => {
+    setSelectedDocuments(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(documentId)) {
+        newSet.delete(documentId);
+      } else {
+        newSet.add(documentId);
+      }
+      return newSet;
+    });
+  };
+
+  const getSelectedDocumentLabels = () => {
+    return documentOptions
+      .filter(doc => selectedDocuments.has(doc.id))
+      .map(doc => doc.label)
+      .join(", ");
+  };
+
   return (
     <div className="grid grid-cols-[1fr_350px] h-[calc(100vh-8rem)] w-full overflow-hidden">
       {/* Assistant Panel (Chat Body) - Flexible width */}
       <main className="flex flex-col overflow-hidden bg-background relative min-w-0" style={{ boxSizing: 'border-box' }}>
         {/* Chat Header */}
         <header className="border-b p-4 bg-background flex-shrink-0">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-primary" />
-            <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
-            <span className="text-sm text-muted-foreground ml-2">Interactive Assistant</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
+              <span className="text-sm text-muted-foreground ml-2">Interactive Assistant</span>
+            </div>
+            
+            {/* Document Selection Dropdown */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Context:</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="text-sm">
+                    {selectedDocuments.size > 0 
+                      ? `${selectedDocuments.size} selected` 
+                      : "Select documents"
+                    }
+                    <ChevronDown className="h-4 w-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {documentOptions.map((doc) => (
+                    <DropdownMenuItem
+                      key={doc.id}
+                      onClick={() => toggleDocument(doc.id)}
+                      className="flex items-center justify-between cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        {doc.icon}
+                        <span>{doc.label}</span>
+                      </div>
+                      {selectedDocuments.has(doc.id) && (
+                        <Check className="h-4 w-4 text-primary" />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
+          
+          {/* Selected Documents Summary */}
+          {selectedDocuments.size > 0 && (
+            <div className="mt-2 pt-2 border-t">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>Using context from:</span>
+                <span className="font-medium">{getSelectedDocumentLabels()}</span>
+              </div>
+            </div>
+          )}
         </header>
 
         {/* Chat Messages */}

@@ -408,6 +408,14 @@ const Chat = () => {
     ));
   };
 
+  const renameConversation = (conversationId: string, newTitle: string) => {
+    updateConversationTitle(conversationId, newTitle);
+    toast({
+      title: "Conversation renamed",
+      description: `Renamed to "${newTitle}"`,
+    });
+  };
+
   return (
     <div className="flex h-screen bg-background">
       {/* Conversation Sidebar */}
@@ -417,6 +425,7 @@ const Chat = () => {
         onSelectConversation={selectConversation}
         onNewChat={createNewConversation}
         onDeleteConversation={deleteConversation}
+        onRenameConversation={renameConversation}
       />
 
       {/* Main Chat Area */}

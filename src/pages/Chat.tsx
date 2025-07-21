@@ -417,7 +417,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-[calc(100vh-2rem)] bg-background -mx-6 -my-4">
       {/* Conversation Sidebar */}
       <ConversationSidebar
         conversations={conversations}
@@ -426,22 +426,23 @@ const Chat = () => {
         onNewChat={createNewConversation}
         onDeleteConversation={deleteConversation}
         onRenameConversation={renameConversation}
+        className="border-r shadow-sm"
       />
 
       {/* Main Chat Area */}
-      <main className="flex-1 flex flex-col bg-background">
-      {/* Chat Header */}
-      <header className="border-b p-4">
-        <div className="mx-auto flex max-w-4xl items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
-          <span className="text-sm text-muted-foreground ml-2">Interactive Assistant</span>
-        </div>
-      </header>
+      <div className="flex-1 flex flex-col bg-background min-w-0">
+        {/* Chat Header */}
+        <header className="border-b p-4 bg-background">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
+            <span className="text-sm text-muted-foreground ml-2">Interactive Assistant</span>
+          </div>
+        </header>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-auto p-4">
-        <div className="mx-auto max-w-4xl space-y-4">
+        {/* Chat Messages */}
+        <div className="flex-1 overflow-auto p-4">
+          <div className="mx-auto max-w-4xl space-y-4">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -527,12 +528,12 @@ const Chat = () => {
           )}
           
           <div ref={messagesEndRef} />
+          </div>
         </div>
-      </div>
 
-      {/* Chat Input */}
-      <div className="border-t bg-background p-4">
-        <div className="mx-auto max-w-4xl">
+        {/* Chat Input */}
+        <div className="border-t bg-background p-4">
+          <div className="mx-auto max-w-4xl">
           {/* Selected Files Preview */}
           {selectedFiles.length > 0 && (
             <div className="mb-3 p-3 bg-gray-50 rounded-lg">
@@ -609,10 +610,10 @@ const Chat = () => {
             <Button type="submit" className="flex-shrink-0">
               <Send className="h-4 w-4" />
             </Button>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
-    </main>
     </div>
   );
 };

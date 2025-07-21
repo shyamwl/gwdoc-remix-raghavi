@@ -292,6 +292,7 @@ export function ConversationSidebar({
       className={cn(
         "relative bg-background border-r border-border transition-all duration-300 ease-in-out flex flex-col",
         isCollapsed ? "w-14" : "w-64",
+        "shadow-sm",
         className
       )}
     >

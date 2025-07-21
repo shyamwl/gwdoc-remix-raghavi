@@ -557,12 +557,24 @@ const Chat = () => {
                   </span>
                 </div>
                 
-                {/* Show document context for user messages */}
+                {/* Show document context for user messages - ChatGPT style */}
                 {message.sender === "user" && message.documentContext && message.documentContext.length > 0 && (
-                  <div className="mb-2 pb-2 border-b border-gray-300">
-                    <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-200 px-2 py-1 rounded">
-                      <FileText className="h-3 w-3" />
-                      <span>Context: {message.documentContext.join(", ")}</span>
+                  <div className="mb-3">
+                    <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-center w-6 h-6 bg-primary/20 rounded-full">
+                          <FileText className="h-3 w-3 text-primary" />
+                        </div>
+                        <span className="text-sm font-medium text-primary">Context Documents</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {message.documentContext.map((docName, index) => (
+                          <div key={index} className="flex items-center gap-1.5 bg-background border border-primary/30 rounded-full px-3 py-1.5">
+                            <div className="w-2 h-2 bg-primary rounded-full"></div>
+                            <span className="text-xs font-medium text-foreground">{docName}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}

@@ -14,7 +14,7 @@ const Pricing = () => {
     "UnLimited Seats",
     "1 Project",
     "Limited features",
-    "Cannot regenerate",
+    "Regeneration NOT allowed",
     "Regular support"
   ];
 
@@ -24,7 +24,7 @@ const Pricing = () => {
     "Billed per seat",
     "Unlimited Projects",
     "All features and tools unlocked",
-    "Allowed (up to 3 times per item)",
+    "Regeneration Allowed (up to 3 times per item)",
     "Premium Support"
   ];
 

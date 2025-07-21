@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File, ChevronDown, Check } from "lucide-react";
+import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File, ChevronDown, Check, Paperclip } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { ConversationSidebar, type Conversation } from "@/components/chat/ConversationSidebar";
@@ -592,25 +592,81 @@ const Chat = () => {
             )}
             
             <form onSubmit={handleSendMessage} className="flex items-center gap-3">
+              {/* Attachment and Document Selection Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="flex-shrink-0 h-10 w-10"
+                    title="Attach files or select documents"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64">
+                  <DropdownMenuItem
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <Paperclip className="h-4 w-4" />
+                    <span>Attach files</span>
+                  </DropdownMenuItem>
+                  
+                  {/* Document Selection with Hover */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <DropdownMenuItem
+                        className="flex items-center justify-between gap-2 cursor-pointer"
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          <span>Select documents</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {selectedDocuments.size > 0 && (
+                            <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
+                              {selectedDocuments.size}
+                            </span>
+                          )}
+                          <ChevronDown className="h-3 w-3" />
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="right" className="w-56">
+                      {documentOptions.map((document) => (
+                        <DropdownMenuItem key={document.id} asChild>
+                          <div
+                            className="flex items-center gap-2 cursor-pointer p-2"
+                            onClick={() => toggleDocument(document.id)}
+                          >
+                            <Checkbox
+                              checked={selectedDocuments.has(document.id)}
+                              onChange={() => toggleDocument(document.id)}
+                              className="mr-2"
+                            />
+                            <span className="text-sm flex-1">{document.label}</span>
+                            {selectedDocuments.has(document.id) && (
+                              <Check className="h-4 w-4 text-green-600" />
+                            )}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <input
                 ref={fileInputRef}
                 type="file"
                 multiple
+                accept="image/*,.txt,.json,.pdf"
                 onChange={handleFileSelect}
                 className="hidden"
-                accept="image/*,text/*,.pdf,.json"
               />
-              
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="flex-shrink-0 h-10 w-10"
-                onClick={() => fileInputRef.current?.click()}
-                title="Add file attachment"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
               
               <Input
                 value={inputValue}
@@ -619,42 +675,6 @@ const Chat = () => {
                 className="flex-1 h-10"
                 placeholder="Type your message or use voice input..."
               />
-              
-              {/* Document Selection Dropdown for AI Editing */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="flex-shrink-0 h-10 px-3 text-sm"
-                    title="Select documents to edit with AI"
-                  >
-                    Select documents
-                    <ChevronDown className="h-4 w-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                  {documentOptions.map((document) => (
-                  <DropdownMenuItem key={document.id} asChild>
-                      <div
-                        className="flex items-center gap-2 cursor-pointer p-2"
-                        onClick={() => toggleDocument(document.id)}
-                      >
-                        <Checkbox
-                          checked={selectedDocuments.has(document.id)}
-                          onChange={() => toggleDocument(document.id)}
-                          className="mr-2"
-                        />
-                        <span className="text-sm flex-1">{document.label}</span>
-                        {selectedDocuments.has(document.id) && (
-                          <Check className="h-4 w-4 text-green-600" />
-                        )}
-                      </div>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
               
               <Button
                 type="button"
@@ -673,6 +693,21 @@ const Chat = () => {
                 <Send className="h-4 w-4" />
               </Button>
             </form>
+            
+            {/* Selected Documents Display */}
+            {selectedDocuments.size > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2 p-2 bg-muted/50 rounded-md">
+                <span className="text-xs text-muted-foreground">Context:</span>
+                {Array.from(selectedDocuments).map(docId => {
+                  const doc = documentOptions.find(d => d.id === docId);
+                  return doc ? (
+                    <span key={docId} className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                      {doc.label}
+                    </span>
+                  ) : null;
+                })}
+              </div>
+            )}
           </div>
         </div>
       </main>

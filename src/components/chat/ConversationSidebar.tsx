@@ -291,7 +291,7 @@ export function ConversationSidebar({
     <div 
       className={cn(
         "relative bg-background border-r border-border transition-all duration-300 ease-in-out flex flex-col",
-        isCollapsed ? "w-14" : "w-64",
+        isCollapsed ? "w-14" : "w-full max-w-full",
         "shadow-sm",
         className
       )}

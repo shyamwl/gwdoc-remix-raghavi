@@ -53,7 +53,7 @@ export function AdvancedTools() {
       tools: [
         {
           name: "Frontend",
-          path: "#",
+          path: "/frontend",
           icon: Code2
         },
         {

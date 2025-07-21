@@ -417,7 +417,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[minmax(250px,350px)_1fr] gap-4 h-[calc(100vh-8rem)] w-full">
+    <div className="grid grid-cols-[280px_1fr] gap-4 h-[calc(100vh-8rem)] w-full">
       {/* Conversation Sidebar */}
       <aside className="chat-sidebar overflow-y-auto border-r border-border bg-background">
         <ConversationSidebar

@@ -12,7 +12,7 @@ export function AppSidebar() {
   const { toggleSidebar, state } = useSidebar();
   
   return (
-    <Sidebar className="w-full max-w-80 min-w-60 animate-sidebar-slide border-r border-sidebar-border">
+    <Sidebar className="w-80 animate-sidebar-slide border-r border-sidebar-border">
       <div className="h-14 flex items-center px-3 md:px-6 border-b gap-2 justify-between">
         <div className="flex items-center gap-2">
           <Button 

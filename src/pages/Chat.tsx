@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { ConversationSidebar, type Conversation } from "@/components/chat/ConversationSidebar";
 
 // Type declarations for Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -52,6 +53,11 @@ interface Message {
 }
 
 const Chat = () => {
+  // Conversation state
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  
+  // Message state
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -75,6 +81,38 @@ const Chat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Load conversations from localStorage on mount
+  useEffect(() => {
+    const savedConversations = localStorage.getItem('gravity-doc-conversations');
+    if (savedConversations) {
+      const parsed = JSON.parse(savedConversations);
+      const conversationsWithDates = parsed.map((conv: any) => ({
+        ...conv,
+        timestamp: new Date(conv.timestamp),
+      }));
+      setConversations(conversationsWithDates);
+      
+      // Set the most recent conversation as active if no conversation is selected
+      if (conversationsWithDates.length > 0 && !activeConversationId) {
+        const mostRecent = conversationsWithDates.sort((a: Conversation, b: Conversation) => 
+          b.timestamp.getTime() - a.timestamp.getTime()
+        )[0];
+        setActiveConversationId(mostRecent.id);
+        loadConversationMessages(mostRecent.id);
+      }
+    } else {
+      // Create initial conversation if no conversations exist
+      createNewConversation();
+    }
+  }, []);
+
+  // Save conversations to localStorage whenever they change
+  useEffect(() => {
+    if (conversations.length > 0) {
+      localStorage.setItem('gravity-doc-conversations', JSON.stringify(conversations));
+    }
+  }, [conversations]);
 
   useEffect(() => {
     // Initialize speech recognition
@@ -176,10 +214,17 @@ const Chat = () => {
       attachments: attachments.length > 0 ? attachments : undefined,
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInputValue("");
     setSelectedFiles([]);
     setIsTyping(true);
+
+    // Update conversation title if it's the first user message
+    if (activeConversationId && updatedMessages.filter(m => m.sender === "user").length === 1) {
+      const title = inputValue.length > 30 ? inputValue.substring(0, 30) + "..." : inputValue;
+      updateConversationTitle(activeConversationId, title || "New Chat");
+    }
 
     // Simulate AI response
     setTimeout(() => {
@@ -193,8 +238,24 @@ const Chat = () => {
         sender: "ai",
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, aiMessage]);
+      
+      const finalMessages = [...updatedMessages, aiMessage];
+      setMessages(finalMessages);
       setIsTyping(false);
+
+      // Save messages and update conversation
+      if (activeConversationId) {
+        saveConversationMessages(activeConversationId, finalMessages);
+        setConversations(prev => prev.map(conv => 
+          conv.id === activeConversationId 
+            ? { 
+                ...conv, 
+                lastMessage: aiResponse.length > 50 ? aiResponse.substring(0, 50) + "..." : aiResponse,
+                timestamp: new Date() 
+              }
+            : conv
+        ));
+      }
     }, 1500);
   };
 
@@ -268,8 +329,98 @@ const Chat = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Conversation management functions
+  const createNewConversation = () => {
+    const newConversation: Conversation = {
+      id: Date.now().toString(),
+      title: "New Chat",
+      lastMessage: "Start a conversation...",
+      timestamp: new Date(),
+    };
+    
+    setConversations(prev => [newConversation, ...prev]);
+    setActiveConversationId(newConversation.id);
+    
+    // Reset messages to initial state
+    setMessages([
+      {
+        id: "1",
+        content: "Hello! I'm GravityDoc AI, your interactive assistant. I can help you customize your workspace, answer questions about your documentation, and make changes to your project. You can type or use voice input to communicate with me.",
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+    
+    // Save the new conversation's messages
+    saveConversationMessages(newConversation.id, [
+      {
+        id: "1",
+        content: "Hello! I'm GravityDoc AI, your interactive assistant. I can help you customize your workspace, answer questions about your documentation, and make changes to your project. You can type or use voice input to communicate with me.",
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+  };
+
+  const selectConversation = (conversationId: string) => {
+    setActiveConversationId(conversationId);
+    loadConversationMessages(conversationId);
+  };
+
+  const deleteConversation = (conversationId: string) => {
+    setConversations(prev => prev.filter(conv => conv.id !== conversationId));
+    
+    // Remove messages from localStorage
+    localStorage.removeItem(`gravity-doc-messages-${conversationId}`);
+    
+    // If we're deleting the active conversation, switch to another or create new
+    if (conversationId === activeConversationId) {
+      const remaining = conversations.filter(conv => conv.id !== conversationId);
+      if (remaining.length > 0) {
+        selectConversation(remaining[0].id);
+      } else {
+        createNewConversation();
+      }
+    }
+  };
+
+  const saveConversationMessages = (conversationId: string, messages: Message[]) => {
+    localStorage.setItem(`gravity-doc-messages-${conversationId}`, JSON.stringify(messages));
+  };
+
+  const loadConversationMessages = (conversationId: string) => {
+    const savedMessages = localStorage.getItem(`gravity-doc-messages-${conversationId}`);
+    if (savedMessages) {
+      const parsed = JSON.parse(savedMessages);
+      const messagesWithDates = parsed.map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp),
+      }));
+      setMessages(messagesWithDates);
+    }
+  };
+
+  const updateConversationTitle = (conversationId: string, newTitle: string) => {
+    setConversations(prev => prev.map(conv => 
+      conv.id === conversationId 
+        ? { ...conv, title: newTitle, timestamp: new Date() }
+        : conv
+    ));
+  };
+
   return (
-    <main className="flex-1 flex flex-col bg-background">
+    <div className="flex h-screen bg-background">
+      {/* Conversation Sidebar */}
+      <ConversationSidebar
+        conversations={conversations}
+        activeConversationId={activeConversationId}
+        onSelectConversation={selectConversation}
+        onNewChat={createNewConversation}
+        onDeleteConversation={deleteConversation}
+      />
+
+      {/* Main Chat Area */}
+      <main className="flex-1 flex flex-col bg-background">
       {/* Chat Header */}
       <header className="border-b p-4">
         <div className="mx-auto flex max-w-4xl items-center gap-2">
@@ -453,6 +604,7 @@ const Chat = () => {
         </div>
       </div>
     </main>
+    </div>
   );
 };
 

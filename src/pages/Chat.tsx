@@ -84,6 +84,9 @@ const Chat = () => {
     new Set(["app-flow", "screen-docs"])
   );
   
+  // UI state
+  const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false);
+  
   // Message state
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -251,6 +254,8 @@ const Chat = () => {
     setMessages(updatedMessages);
     setInputValue("");
     setSelectedFiles([]);
+    setSelectedDocuments(new Set()); // Clear document selection
+    setIsAttachMenuOpen(false); // Close attach menu
     setIsTyping(true);
 
     // Update conversation title if it's the first user message

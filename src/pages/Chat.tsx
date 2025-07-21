@@ -417,20 +417,22 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-2rem)] bg-background -mx-6 -my-4 gap-4">
+    <div className="layout-container grid grid-cols-[280px_1fr] gap-4 h-[calc(100vh-2rem)] bg-background -mx-6 -my-4 px-4">
       {/* Conversation Sidebar */}
-      <ConversationSidebar
-        conversations={conversations}
-        activeConversationId={activeConversationId}
-        onSelectConversation={selectConversation}
-        onNewChat={createNewConversation}
-        onDeleteConversation={deleteConversation}
-        onRenameConversation={renameConversation}
-        className="border-r shadow-sm ml-4"
-      />
+      <aside className="chat-sidebar overflow-y-auto border-r border-border bg-background">
+        <ConversationSidebar
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          onSelectConversation={selectConversation}
+          onNewChat={createNewConversation}
+          onDeleteConversation={deleteConversation}
+          onRenameConversation={renameConversation}
+          className="h-full"
+        />
+      </aside>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-background min-w-0">
+      <main className="chat-window flex flex-col overflow-hidden bg-background min-w-0">
         {/* Chat Header */}
         <header className="border-b p-4 bg-background">
           <div className="flex items-center gap-2">
@@ -613,7 +615,7 @@ const Chat = () => {
             </form>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

@@ -417,20 +417,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[350px_1fr] h-[calc(100vh-8rem)] w-full overflow-hidden">
-      {/* Chat List (Conversations) - Fixed width 350px */}
-      <aside className="overflow-y-auto bg-background relative min-w-0" style={{ boxSizing: 'border-box', borderRight: '1px solid #e0e0e0' }}>
-        <ConversationSidebar
-          conversations={conversations}
-          activeConversationId={activeConversationId}
-          onSelectConversation={selectConversation}
-          onNewChat={createNewConversation}
-          onDeleteConversation={deleteConversation}
-          onRenameConversation={renameConversation}
-          className="h-full"
-        />
-      </aside>
-
+    <div className="grid grid-cols-[1fr_350px] h-[calc(100vh-8rem)] w-full overflow-hidden">
       {/* Assistant Panel (Chat Body) - Flexible width */}
       <main className="flex flex-col overflow-hidden bg-background relative min-w-0" style={{ boxSizing: 'border-box' }}>
         {/* Chat Header */}
@@ -607,6 +594,19 @@ const Chat = () => {
           </div>
         </div>
       </main>
+
+      {/* Chat List (Conversations) - Fixed width 350px on the right */}
+      <aside className="overflow-y-auto bg-background relative min-w-0" style={{ boxSizing: 'border-box', borderLeft: '1px solid #e0e0e0' }}>
+        <ConversationSidebar
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          onSelectConversation={selectConversation}
+          onNewChat={createNewConversation}
+          onDeleteConversation={deleteConversation}
+          onRenameConversation={renameConversation}
+          className="h-full"
+        />
+      </aside>
     </div>
   );
 };

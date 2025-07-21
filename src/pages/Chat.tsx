@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Send, Mic, MicOff, Plus, X, FileText, Image, File, ChevronDown, Check } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { ConversationSidebar, type Conversation } from "@/components/chat/ConversationSidebar";
 import {
@@ -61,17 +62,16 @@ interface Message {
 interface DocumentOption {
   id: string;
   label: string;
-  icon: React.ReactNode;
 }
 
 const Chat = () => {
   // Document options for context selection
   const documentOptions: DocumentOption[] = [
-    { id: "app-flow", label: "App Flow", icon: <FileText className="h-4 w-4" /> },
-    { id: "screen-docs", label: "Screenwise Docs", icon: <Image className="h-4 w-4" /> },
-    { id: "api-docs", label: "API Documentation", icon: <FileText className="h-4 w-4" /> },
-    { id: "backend-logic", label: "Backend Logic", icon: <File className="h-4 w-4" /> },
-    { id: "user-stories", label: "User Stories", icon: <FileText className="h-4 w-4" /> },
+    { id: "app-flow", label: "App Flow" },
+    { id: "screen-docs", label: "Screenwise Docs" },
+    { id: "api-docs", label: "API Documentation" },
+    { id: "backend-logic", label: "Backend Logic" },
+    { id: "user-stories", label: "User Stories" },
   ];
 
   // Conversation state
@@ -468,56 +468,11 @@ const Chat = () => {
       <main className="flex flex-col overflow-hidden bg-background relative min-w-0" style={{ boxSizing: 'border-box' }}>
         {/* Chat Header */}
         <header className="border-b p-4 bg-background flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
-              <span className="text-sm text-muted-foreground ml-2">Interactive Assistant</span>
-            </div>
-            
-            {/* Document Selection Dropdown */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Context:</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-sm">
-                    {selectedDocuments.size > 0 
-                      ? `${selectedDocuments.size} selected` 
-                      : "Select documents"
-                    }
-                    <ChevronDown className="h-4 w-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  {documentOptions.map((doc) => (
-                    <DropdownMenuItem
-                      key={doc.id}
-                      onClick={() => toggleDocument(doc.id)}
-                      className="flex items-center justify-between cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        {doc.icon}
-                        <span>{doc.label}</span>
-                      </div>
-                      {selectedDocuments.has(doc.id) && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            <h1 className="text-lg font-semibold">GravityDoc Chat</h1>
+            <span className="text-sm text-muted-foreground ml-2">Interactive Assistant</span>
           </div>
-          
-          {/* Selected Documents Summary */}
-          {selectedDocuments.size > 0 && (
-            <div className="mt-2 pt-2 border-t">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>Using context from:</span>
-                <span className="font-medium">{getSelectedDocumentLabels()}</span>
-              </div>
-            </div>
-          )}
         </header>
 
         {/* Chat Messages */}
@@ -681,17 +636,19 @@ const Chat = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
                   {documentOptions.map((document) => (
-                    <DropdownMenuItem key={document.id} asChild>
+                  <DropdownMenuItem key={document.id} asChild>
                       <div
                         className="flex items-center gap-2 cursor-pointer p-2"
                         onClick={() => toggleDocument(document.id)}
                       >
-                        <div className="flex items-center gap-2 flex-1">
-                          {document.icon}
-                          <span className="text-sm">{document.label}</span>
-                        </div>
+                        <Checkbox
+                          checked={selectedDocuments.has(document.id)}
+                          onChange={() => toggleDocument(document.id)}
+                          className="mr-2"
+                        />
+                        <span className="text-sm flex-1">{document.label}</span>
                         {selectedDocuments.has(document.id) && (
-                          <Check className="h-4 w-4 text-primary" />
+                          <Check className="h-4 w-4 text-green-600" />
                         )}
                       </div>
                     </DropdownMenuItem>

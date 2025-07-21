@@ -638,9 +638,6 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
           onClose={() => setLightboxImage(null)}
         />
       )}
-
-      {/* Feedback Widget */}
-      <FeedbackWidget />
     </div>
   );
 }

@@ -417,7 +417,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-2rem)] bg-background -mx-6 -my-4">
+    <div className="flex h-[calc(100vh-2rem)] bg-background -mx-6 -my-4 gap-4">
       {/* Conversation Sidebar */}
       <ConversationSidebar
         conversations={conversations}
@@ -426,7 +426,7 @@ const Chat = () => {
         onNewChat={createNewConversation}
         onDeleteConversation={deleteConversation}
         onRenameConversation={renameConversation}
-        className="border-r shadow-sm"
+        className="border-r shadow-sm ml-4"
       />
 
       {/* Main Chat Area */}

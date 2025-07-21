@@ -235,13 +235,14 @@ export function ConversationSidebar({
                             <MoreHorizontal className="h-3 w-3" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-32">
+                        <DropdownMenuContent align="end" className="w-36 z-[9999] bg-background border shadow-xl">
                           {onRenameConversation && (
                             <DropdownMenuItem
                               onClick={(e) => {
                                 e.stopPropagation();
                                 startRename(conversation);
                               }}
+                              className="text-xs"
                             >
                               <Edit3 className="h-3 w-3 mr-2" />
                               Rename
@@ -255,7 +256,7 @@ export function ConversationSidebar({
                                   e.stopPropagation();
                                   onDeleteConversation(conversation.id);
                                 }}
-                                className="text-destructive focus:text-destructive"
+                                className="text-destructive focus:text-destructive text-xs"
                               >
                                 <Trash2 className="h-3 w-3 mr-2" />
                                 Delete
@@ -327,7 +328,7 @@ export function ConversationSidebar({
 
       {/* Search and Sort Controls */}
       {!isCollapsed && (
-        <div className="p-3 space-y-2 border-b border-border">
+        <div className="p-3 space-y-2 border-b border-border relative z-50">
           {/* Search Bar */}
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-3 w-3 text-muted-foreground" />
@@ -341,14 +342,18 @@ export function ConversationSidebar({
           
           {/* Sort Options */}
           <div className="flex items-center gap-2">
-            <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+            <ArrowUpDown className="h-3 w-3 text-muted-foreground flex-shrink-0" />
             <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
-              <SelectTrigger className="h-7 text-xs">
+              <SelectTrigger className="h-7 text-xs flex-1">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectContent 
+                className="z-[9999] bg-background border shadow-xl rounded-lg min-w-[120px]"
+                sideOffset={4}
+                align="start"
+              >
+                <SelectItem value="newest" className="text-xs">Newest First</SelectItem>
+                <SelectItem value="oldest" className="text-xs">Oldest First</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -357,7 +362,7 @@ export function ConversationSidebar({
 
       {/* Conversations List */}
       <ScrollArea 
-        className="flex-1" 
+        className="flex-1 relative z-10" 
         ref={scrollAreaRef}
         onScrollCapture={handleScroll}
       >

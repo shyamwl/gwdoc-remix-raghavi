@@ -42,7 +42,7 @@ const Pricing = () => {
 
   const calculateProPrice = (members: string) => {
     const memberCount = parseInt(members);
-    return memberCount * 15;
+    return memberCount * 20;
   };
 
   const isEnterprise = parseInt(teamSize) >= 30;
@@ -126,7 +126,7 @@ const Pricing = () => {
                 </div>
                 {!isEnterprise && parseInt(teamSize) > 1 && (
                   <div className="text-sm text-muted-foreground mt-1">
-                    $15 per seat
+                    $20 per seat
                   </div>
                 )}
               </div>

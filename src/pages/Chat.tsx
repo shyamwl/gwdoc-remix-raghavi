@@ -417,9 +417,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
-      {/* Chat List (Conversations) - Fixed width */}
-      <aside className="flex-shrink-0 w-80 min-w-80 overflow-y-auto border-r border-border bg-background">
+    <div className="grid grid-cols-[350px_1fr] h-[calc(100vh-8rem)] w-full overflow-hidden">
+      {/* Chat List (Conversations) - Fixed width 350px */}
+      <aside className="overflow-y-auto bg-background relative min-w-0" style={{ boxSizing: 'border-box', borderRight: '1px solid #e0e0e0' }}>
         <ConversationSidebar
           conversations={conversations}
           activeConversationId={activeConversationId}
@@ -432,7 +432,7 @@ const Chat = () => {
       </aside>
 
       {/* Assistant Panel (Chat Body) - Flexible width */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-background min-w-0">
+      <main className="flex flex-col overflow-hidden bg-background relative min-w-0" style={{ boxSizing: 'border-box' }}>
         {/* Chat Header */}
         <header className="border-b p-4 bg-background flex-shrink-0">
           <div className="flex items-center gap-2">

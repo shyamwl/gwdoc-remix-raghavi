@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { StepperProgress } from "@/components/screens/StepperProgress";
-import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+//import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {

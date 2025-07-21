@@ -417,7 +417,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex gap-4 h-[calc(100vh-8rem)] w-full overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden">
       {/* Chat List (Conversations) - Fixed width */}
       <aside className="flex-shrink-0 w-80 min-w-80 overflow-y-auto border-r border-border bg-background">
         <ConversationSidebar

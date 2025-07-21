@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { StepperProgress } from "@/components/screens/StepperProgress";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,8 @@ import {
   Copy,
   CheckCircle,
   Wand2,
+  Eye,
+  FileCode,
 } from "lucide-react";
 import {
   Collapsible,
@@ -454,27 +457,6 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   <h2 className="text-2xl font-bold">{selectedScreen.description}</h2>
                   <p className="text-muted-foreground">Frontend development prompt</p>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => openPromptSheet(selectedScreen)}
-                    className="gap-2"
-                  >
-                    <Wand2 className="h-4 w-4" />
-                    Generate Prompt
-                  </Button>
-                  <Button
-                    onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
-                    className="gap-2"
-                  >
-                    {copiedPrompt === selectedScreen.id ? (
-                      <CheckCircle className="h-4 w-4" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                    {copiedPrompt === selectedScreen.id ? "Copied!" : "Copy Prompt"}
-                  </Button>
-                </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -486,32 +468,75 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
               </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-auto p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Screen Preview */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Screen Preview</h3>
-                  <div className="border rounded-lg overflow-hidden">
-                    <img
-                      src={selectedScreen.image}
-                      alt={selectedScreen.description}
-                      className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => setLightboxImage(selectedScreen.image)}
-                    />
-                  </div>
+            {/* Content with Tabs */}
+            <div className="flex-1 overflow-hidden">
+              <Tabs defaultValue="preview" className="h-full flex flex-col">
+                <div className="px-6 pt-4 border-b">
+                  <TabsList className="grid w-full max-w-md grid-cols-2">
+                    <TabsTrigger value="preview" className="gap-2">
+                      <Eye className="h-4 w-4" />
+                      Screen Preview
+                    </TabsTrigger>
+                    <TabsTrigger value="prompt" className="gap-2">
+                      <FileCode className="h-4 w-4" />
+                      Development Prompt
+                    </TabsTrigger>
+                  </TabsList>
                 </div>
 
-                {/* Frontend Prompt */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Frontend Development Prompt</h3>
-                  <div className="bg-muted rounded-lg p-4 h-[500px] overflow-auto">
-                    <pre className="whitespace-pre-wrap text-sm font-mono">
-                      {selectedScreen.frontendPrompt}
-                    </pre>
+                <TabsContent value="preview" className="flex-1 overflow-auto p-6 mt-0">
+                  <div className="max-w-4xl mx-auto">
+                    <h3 className="text-lg font-semibold mb-4">Screen Preview</h3>
+                    <div className="border rounded-lg overflow-hidden">
+                      <img
+                        src={selectedScreen.image}
+                        alt={selectedScreen.description}
+                        className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => setLightboxImage(selectedScreen.image)}
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-4 text-center">
+                      Click on the image to view in fullscreen
+                    </p>
                   </div>
-                </div>
-              </div>
+                </TabsContent>
+
+                <TabsContent value="prompt" className="flex-1 overflow-auto p-6 mt-0">
+                  <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Frontend Development Prompt</h3>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => openPromptSheet(selectedScreen)}
+                          size="sm"
+                          className="gap-2"
+                        >
+                          <Wand2 className="h-4 w-4" />
+                          Enhanced Prompt
+                        </Button>
+                        <Button
+                          onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
+                          size="sm"
+                          className="gap-2"
+                        >
+                          {copiedPrompt === selectedScreen.id ? (
+                            <CheckCircle className="h-4 w-4" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                          {copiedPrompt === selectedScreen.id ? "Copied!" : "Copy"}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="bg-muted rounded-lg p-6">
+                      <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                        {selectedScreen.frontendPrompt}
+                      </pre>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </>
         ) : (

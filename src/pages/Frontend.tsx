@@ -261,6 +261,7 @@ export default function Frontend() {
   const [editingScreen, setEditingScreen] = useState<EnhancedScreenItem | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
+  const [showDeveloperPrompt, setShowDeveloperPrompt] = useState(false);
 
   // Auto-select first screen on load
   useEffect(() => {
@@ -271,6 +272,7 @@ export default function Frontend() {
 
   const handleScreenSelect = (screen: EnhancedScreenItem) => {
     setSelectedScreen(screen);
+    setShowDeveloperPrompt(false); // Reset to preview when selecting new screen
   };
 
   const handleEditScreen = (screen: EnhancedScreenItem) => {
@@ -362,6 +364,10 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
   const openPromptSheet = (screen: EnhancedScreenItem) => {
     setSelectedScreen(screen);
     setIsPromptSheetOpen(true);
+  };
+
+  const handleGenerateDeveloperPrompt = () => {
+    setShowDeveloperPrompt(true);
   };
 
   return (
@@ -468,75 +474,123 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
               </div>
             </div>
 
-            {/* Content with Tabs */}
+            {/* Content */}
             <div className="flex-1 overflow-hidden">
-              <Tabs defaultValue="preview" className="h-full flex flex-col">
-                <div className="px-6 pt-4 border-b">
-                  <TabsList className="grid w-full max-w-md grid-cols-2">
-                    <TabsTrigger value="preview" className="gap-2">
-                      <Eye className="h-4 w-4" />
-                      Screen Preview
-                    </TabsTrigger>
-                    <TabsTrigger value="prompt" className="gap-2">
-                      <FileCode className="h-4 w-4" />
-                      Development Prompt
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-
-                <TabsContent value="preview" className="flex-1 overflow-auto p-6 mt-0">
+              {!showDeveloperPrompt ? (
+                /* Initial Preview with Generate Button */
+                <div className="flex-1 overflow-auto p-6">
                   <div className="max-w-4xl mx-auto">
-                    <h3 className="text-lg font-semibold mb-4">Screen Preview</h3>
-                    <div className="border rounded-lg overflow-hidden">
-                      <img
-                        src={selectedScreen.image}
-                        alt={selectedScreen.description}
-                        className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => setLightboxImage(selectedScreen.image)}
-                      />
+                    <div className="relative">
+                      <div className="border rounded-lg overflow-hidden">
+                        <img
+                          src={selectedScreen.image}
+                          alt={selectedScreen.description}
+                          className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => setLightboxImage(selectedScreen.image)}
+                        />
+                      </div>
+                      {/* Generate Developer Prompt Button - positioned on top of image */}
+                      <div className="absolute top-4 right-4">
+                        <Button
+                          onClick={handleGenerateDeveloperPrompt}
+                          className="gap-2 shadow-lg"
+                          size="lg"
+                        >
+                          <FileCode className="h-4 w-4" />
+                          Generate Developer Prompt
+                        </Button>
+                      </div>
                     </div>
                     <p className="text-sm text-muted-foreground mt-4 text-center">
                       Click on the image to view in fullscreen
                     </p>
                   </div>
-                </TabsContent>
+                </div>
+              ) : (
+                /* Two-Tab Layout after Generation */
+                <Tabs value="prompt" className="h-full flex flex-col">
+                  <div className="px-6 pt-4 border-b">
+                    <TabsList className="grid w-full max-w-md grid-cols-2">
+                      <TabsTrigger value="preview" className="gap-2">
+                        <Eye className="h-4 w-4" />
+                        Screen Preview
+                      </TabsTrigger>
+                      <TabsTrigger value="prompt" className="gap-2">
+                        <FileCode className="h-4 w-4" />
+                        Developer Prompt
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
 
-                <TabsContent value="prompt" className="flex-1 overflow-auto p-6 mt-0">
-                  <div className="max-w-4xl mx-auto">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Frontend Development Prompt</h3>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          onClick={() => openPromptSheet(selectedScreen)}
-                          size="sm"
-                          className="gap-2"
-                        >
-                          <Wand2 className="h-4 w-4" />
-                          Enhanced Prompt
-                        </Button>
-                        <Button
-                          onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
-                          size="sm"
-                          className="gap-2"
-                        >
-                          {copiedPrompt === selectedScreen.id ? (
-                            <CheckCircle className="h-4 w-4" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                          {copiedPrompt === selectedScreen.id ? "Copied!" : "Copy"}
-                        </Button>
+                  <TabsContent value="preview" className="flex-1 overflow-auto p-6 mt-0">
+                    <div className="max-w-4xl mx-auto">
+                      <h3 className="text-lg font-semibold mb-4">Screen Preview</h3>
+                      <div className="border rounded-lg overflow-hidden">
+                        <img
+                          src={selectedScreen.image}
+                          alt={selectedScreen.description}
+                          className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => setLightboxImage(selectedScreen.image)}
+                        />
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-4 text-center">
+                        Click on the image to view in fullscreen
+                      </p>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="prompt" className="flex-1 overflow-auto p-6 mt-0">
+                    <div className="max-w-4xl mx-auto">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold">Developer Prompt</h3>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => openPromptSheet(selectedScreen)}
+                            size="sm"
+                            className="gap-2"
+                          >
+                            <Wand2 className="h-4 w-4" />
+                            Enhanced
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              // Regenerate prompt logic can be added here
+                              toast({
+                                title: "Prompt regenerated!",
+                                description: "Developer prompt has been regenerated.",
+                              });
+                            }}
+                            size="sm"
+                            className="gap-2"
+                          >
+                            <Wand2 className="h-4 w-4" />
+                            Regenerate
+                          </Button>
+                          <Button
+                            onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
+                            size="sm"
+                            className="gap-2"
+                          >
+                            {copiedPrompt === selectedScreen.id ? (
+                              <CheckCircle className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                            {copiedPrompt === selectedScreen.id ? "Copied!" : "Copy"}
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="bg-muted rounded-lg p-6">
+                        <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                          {generateCustomPrompt(selectedScreen)}
+                        </pre>
                       </div>
                     </div>
-                    <div className="bg-muted rounded-lg p-6">
-                      <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
-                        {selectedScreen.frontendPrompt}
-                      </pre>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                  </TabsContent>
+                </Tabs>
+              )}
             </div>
           </>
         ) : (

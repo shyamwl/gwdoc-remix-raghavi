@@ -50,7 +50,6 @@ interface EnhancedScreenItem extends ScreenItem {
 }
 
 export default function Frontend() {
-  // Sample screens data with frontend prompts
   const [screens, setScreens] = useState<EnhancedScreenItem[]>([
     {
       id: "1",
@@ -263,7 +262,6 @@ export default function Frontend() {
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
   const [showDeveloperPrompt, setShowDeveloperPrompt] = useState(false);
 
-  // Auto-select first screen on load
   useEffect(() => {
     if (screens.length > 0 && !selectedScreen) {
       setSelectedScreen(screens[0]);
@@ -507,7 +505,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   </div>
                 </div>
               ) : (
-                /* Two-Tab Layout after Generation */
+                /* Two-Tab Layout after Generation - Default to Developer Prompt tab */
                 <Tabs value="prompt" className="h-full flex flex-col">
                   <div className="px-6 pt-4 border-b">
                     <TabsList className="grid w-full max-w-md grid-cols-2">

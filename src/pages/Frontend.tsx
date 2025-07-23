@@ -475,7 +475,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
             {/* Content */}
             <div className="flex-1 overflow-hidden">
               {!showDeveloperPrompt ? (
-                /* Initial Preview with Generate Button */
+                /* Initial View - Only Screen Preview */
                 <div className="flex-1 overflow-auto p-6">
                   <div className="max-w-4xl mx-auto">
                     <div className="relative">
@@ -487,7 +487,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                           onClick={() => setLightboxImage(selectedScreen.image)}
                         />
                       </div>
-                      {/* Generate Developer Prompt Button - positioned on top of image */}
+                      {/* Generate Developer Prompt Button - positioned on top-right of image */}
                       <div className="absolute top-4 right-4">
                         <Button
                           onClick={handleGenerateDeveloperPrompt}
@@ -505,7 +505,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   </div>
                 </div>
               ) : (
-                /* Two-Tab Layout after Generation - Default to Developer Prompt tab */
+                /* Two-Tab Layout after Generation */
                 <Tabs value="prompt" className="h-full flex flex-col">
                   <div className="px-6 pt-4 border-b">
                     <TabsList className="grid w-full max-w-md grid-cols-2">

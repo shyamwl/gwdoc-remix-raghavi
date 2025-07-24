@@ -475,34 +475,21 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
             {/* Content */}
             <div className="flex-1 overflow-hidden">
               {!showDeveloperPrompt ? (
-                /* Initial View - Screen Preview with Centered Generate Button */
-                <div className="flex-1 overflow-auto p-6">
-                  <div className="max-w-4xl mx-auto">
-                    <div className="relative">
-                      <div className="border rounded-lg overflow-hidden">
-                        <img
-                          src={selectedScreen.image}
-                          alt={selectedScreen.description}
-                          className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={() => setLightboxImage(selectedScreen.image)}
-                        />
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-4 text-center">
-                      Click on the image to view in fullscreen
+                /* Initial View - Centered Generate Button */
+                <div className="flex-1 flex flex-col items-center justify-center p-6">
+                  <div className="text-center space-y-6 max-w-md">
+                    <h3 className="text-lg font-semibold">Frontend Development Prompt</h3>
+                    <p className="text-muted-foreground">
+                      Generate a comprehensive development prompt for implementing this screen with modern React, TypeScript, and Tailwind CSS.
                     </p>
-                    
-                    {/* Centered Generate Developer Prompt Button */}
-                    <div className="flex justify-center mt-8">
-                      <Button
-                        onClick={handleGenerateDeveloperPrompt}
-                        className="gap-2"
-                        size="lg"
-                      >
-                        <FileCode className="h-4 w-4" />
-                        Generate Developer Prompt
-                      </Button>
-                    </div>
+                    <Button 
+                      size="lg" 
+                      onClick={handleGenerateDeveloperPrompt} 
+                      className="w-full gap-2"
+                    >
+                      <FileCode className="h-5 w-5" />
+                      Generate Developer Prompt
+                    </Button>
                   </div>
                 </div>
               ) : (

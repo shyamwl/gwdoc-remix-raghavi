@@ -501,15 +501,6 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
-                          onClick={() => openPromptSheet(selectedScreen)}
-                          size="sm"
-                          className="gap-2"
-                        >
-                          <Wand2 className="h-4 w-4" />
-                          Enhanced
-                        </Button>
-                        <Button
-                          variant="outline"
                           onClick={() => {
                             // Regenerate prompt logic can be added here
                             toast({

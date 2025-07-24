@@ -461,17 +461,6 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   <h2 className="text-2xl font-bold">{selectedScreen.description}</h2>
                   <p className="text-muted-foreground">Frontend development prompt</p>
                 </div>
-                {/* Show Generate Developer Prompt button in header until generated */}
-                {!showDeveloperPrompt && (
-                  <Button
-                    onClick={handleGenerateDeveloperPrompt}
-                    className="gap-2"
-                    size="lg"
-                  >
-                    <FileCode className="h-4 w-4" />
-                    Generate Developer Prompt
-                  </Button>
-                )}
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -486,7 +475,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
             {/* Content */}
             <div className="flex-1 overflow-hidden">
               {!showDeveloperPrompt ? (
-                /* Initial View - Only Screen Preview */
+                /* Initial View - Screen Preview with Centered Generate Button */
                 <div className="flex-1 overflow-auto p-6">
                   <div className="max-w-4xl mx-auto">
                     <div className="relative">
@@ -502,92 +491,72 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                     <p className="text-sm text-muted-foreground mt-4 text-center">
                       Click on the image to view in fullscreen
                     </p>
+                    
+                    {/* Centered Generate Developer Prompt Button */}
+                    <div className="flex justify-center mt-8">
+                      <Button
+                        onClick={handleGenerateDeveloperPrompt}
+                        className="gap-2"
+                        size="lg"
+                      >
+                        <FileCode className="h-4 w-4" />
+                        Generate Developer Prompt
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : (
-                /* Two-Tab Layout after Generation - Default to Developer Prompt tab */
-                <Tabs defaultValue="prompt" className="h-full flex flex-col">
-                  <div className="px-6 pt-4 border-b">
-                    <TabsList className="grid w-full max-w-md grid-cols-2">
-                      <TabsTrigger value="preview" className="gap-2">
-                        <Eye className="h-4 w-4" />
-                        Screen Preview
-                      </TabsTrigger>
-                      <TabsTrigger value="prompt" className="gap-2">
-                        <FileCode className="h-4 w-4" />
-                        Developer Prompt
-                      </TabsTrigger>
-                    </TabsList>
+                /* Developer Prompt View - Show only the prompt */
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Developer Prompt</h3>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => openPromptSheet(selectedScreen)}
+                          size="sm"
+                          className="gap-2"
+                        >
+                          <Wand2 className="h-4 w-4" />
+                          Enhanced
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            // Regenerate prompt logic can be added here
+                            toast({
+                              title: "Prompt regenerated!",
+                              description: "Developer prompt has been regenerated.",
+                            });
+                          }}
+                          size="sm"
+                          className="gap-2"
+                        >
+                          <Wand2 className="h-4 w-4" />
+                          Regenerate
+                        </Button>
+                        <Button
+                          onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
+                          size="sm"
+                          className="gap-2"
+                        >
+                          {copiedPrompt === selectedScreen.id ? (
+                            <CheckCircle className="h-4 w-4" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                          {copiedPrompt === selectedScreen.id ? "Copied!" : "Copy"}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="bg-muted rounded-lg p-6">
+                      <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                        {generateCustomPrompt(selectedScreen)}
+                      </pre>
+                    </div>
                   </div>
-
-                  <TabsContent value="preview" className="flex-1 overflow-auto p-6 mt-0">
-                    <div className="max-w-4xl mx-auto">
-                      <h3 className="text-lg font-semibold mb-4">Screen Preview</h3>
-                      <div className="border rounded-lg overflow-hidden">
-                        <img
-                          src={selectedScreen.image}
-                          alt={selectedScreen.description}
-                          className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={() => setLightboxImage(selectedScreen.image)}
-                        />
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-4 text-center">
-                        Click on the image to view in fullscreen
-                      </p>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="prompt" className="flex-1 overflow-auto p-6 mt-0">
-                    <div className="max-w-4xl mx-auto">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold">Developer Prompt</h3>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={() => openPromptSheet(selectedScreen)}
-                            size="sm"
-                            className="gap-2"
-                          >
-                            <Wand2 className="h-4 w-4" />
-                            Enhanced
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              // Regenerate prompt logic can be added here
-                              toast({
-                                title: "Prompt regenerated!",
-                                description: "Developer prompt has been regenerated.",
-                              });
-                            }}
-                            size="sm"
-                            className="gap-2"
-                          >
-                            <Wand2 className="h-4 w-4" />
-                            Regenerate
-                          </Button>
-                          <Button
-                            onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
-                            size="sm"
-                            className="gap-2"
-                          >
-                            {copiedPrompt === selectedScreen.id ? (
-                              <CheckCircle className="h-4 w-4" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                            {copiedPrompt === selectedScreen.id ? "Copied!" : "Copy"}
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="bg-muted rounded-lg p-6">
-                        <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
-                          {generateCustomPrompt(selectedScreen)}
-                        </pre>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                </div>
               )}
             </div>
           </>

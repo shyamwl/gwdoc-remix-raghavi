@@ -24,6 +24,8 @@ import ApiDocs from "./pages/ApiDocs";
 import DatabaseSchema from "./pages/DatabaseSchema";
 import Pricing from "./pages/Pricing";
 import Frontend from "./pages/Frontend";
+import FRD from "./pages/FRD";
+import PRD from "./pages/PRD";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +56,8 @@ const App = () => (
             <Route path="/database-schema" element={<DatabaseSchema />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/frontend" element={<Frontend />} />
+            <Route path="/frd" element={<FRD />} />
+            <Route path="/prd" element={<PRD />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

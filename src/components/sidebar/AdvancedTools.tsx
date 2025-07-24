@@ -1,5 +1,5 @@
 
-import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, MessageSquare, ChevronRight, Clipboard, Laptop } from "lucide-react";
+import { Clock, Loader2, CheckCircle, FileText, TestTube, Database, Code2, MessageSquare, ChevronRight, Clipboard, Laptop, FileCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarGroup } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -42,6 +42,16 @@ export function AdvancedTools() {
           path: "#",
           docId: "test-cases",
           icon: TestTube
+        },
+        {
+          name: "FRD",
+          path: "/frd",
+          icon: FileCheck
+        },
+        {
+          name: "PRD",
+          path: "/prd",
+          icon: FileText
         }
       ]
     },

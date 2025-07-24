@@ -461,6 +461,17 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   <h2 className="text-2xl font-bold">{selectedScreen.description}</h2>
                   <p className="text-muted-foreground">Frontend development prompt</p>
                 </div>
+                {/* Show Generate Developer Prompt button in header until generated */}
+                {!showDeveloperPrompt && (
+                  <Button
+                    onClick={handleGenerateDeveloperPrompt}
+                    className="gap-2"
+                    size="lg"
+                  >
+                    <FileCode className="h-4 w-4" />
+                    Generate Developer Prompt
+                  </Button>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -487,17 +498,6 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                           onClick={() => setLightboxImage(selectedScreen.image)}
                         />
                       </div>
-                      {/* Generate Developer Prompt Button - positioned on top-right of image */}
-                      <div className="absolute top-4 right-4">
-                        <Button
-                          onClick={handleGenerateDeveloperPrompt}
-                          className="gap-2 shadow-lg"
-                          size="lg"
-                        >
-                          <FileCode className="h-4 w-4" />
-                          Generate Developer Prompt
-                        </Button>
-                      </div>
                     </div>
                     <p className="text-sm text-muted-foreground mt-4 text-center">
                       Click on the image to view in fullscreen
@@ -505,8 +505,8 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   </div>
                 </div>
               ) : (
-                /* Two-Tab Layout after Generation */
-                <Tabs value="prompt" className="h-full flex flex-col">
+                /* Two-Tab Layout after Generation - Default to Developer Prompt tab */
+                <Tabs defaultValue="prompt" className="h-full flex flex-col">
                   <div className="px-6 pt-4 border-b">
                     <TabsList className="grid w-full max-w-md grid-cols-2">
                       <TabsTrigger value="preview" className="gap-2">

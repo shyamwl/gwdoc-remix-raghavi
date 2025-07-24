@@ -1,4 +1,3 @@
-
 import { FileText, Sparkles, Download, Copy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -214,6 +213,14 @@ export default function PRD() {
     });
   };
 
+  const handleRegenerate = () => {
+    setContent(SAMPLE_PRD_CONTENT);
+    toast({
+      title: "PRD Regenerated",
+      description: "Your Product Requirements Document has been regenerated.",
+    });
+  };
+
   const handleCopyText = async () => {
     try {
       await navigator.clipboard.writeText(content);
@@ -324,13 +331,19 @@ export default function PRD() {
             Write your product requirements document here. Include product vision, target audience, feature requirements, and success metrics.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           <Textarea
             placeholder="Start writing your Product Requirements Document here..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[500px] font-mono text-sm"
           />
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleRegenerate} variant="outline">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Regenerate
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

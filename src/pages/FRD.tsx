@@ -1,4 +1,3 @@
-
 import { FileCheck, Sparkles, Download, Copy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -300,6 +299,14 @@ export default function FRD() {
     });
   };
 
+  const handleRegenerate = () => {
+    setContent(SAMPLE_FRD_CONTENT);
+    toast({
+      title: "FRD Regenerated",
+      description: "Your Functional Requirements Document has been regenerated.",
+    });
+  };
+
   const handleCopyText = async () => {
     try {
       await navigator.clipboard.writeText(content);
@@ -410,13 +417,19 @@ export default function FRD() {
             Write your functional requirements document here. Include system behavior, user workflows, and technical specifications.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           <Textarea
             placeholder="Start writing your Functional Requirements Document here..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[500px] font-mono text-sm"
           />
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleRegenerate} variant="outline">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Regenerate
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

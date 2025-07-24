@@ -260,7 +260,7 @@ export default function Frontend() {
   const [editingScreen, setEditingScreen] = useState<EnhancedScreenItem | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
-  const [showDeveloperPrompt, setShowDeveloperPrompt] = useState(false);
+  const [generatedScreens, setGeneratedScreens] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (screens.length > 0 && !selectedScreen) {
@@ -270,7 +270,6 @@ export default function Frontend() {
 
   const handleScreenSelect = (screen: EnhancedScreenItem) => {
     setSelectedScreen(screen);
-    setShowDeveloperPrompt(false); // Reset to preview when selecting new screen
   };
 
   const handleEditScreen = (screen: EnhancedScreenItem) => {
@@ -294,6 +293,11 @@ export default function Frontend() {
 
   const handleDeleteScreen = (screenId: string) => {
     setScreens(prev => prev.filter(screen => screen.id !== screenId));
+    setGeneratedScreens(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(screenId);
+      return newSet;
+    });
     
     if (selectedScreen?.id === screenId) {
       const remaining = screens.filter(s => s.id !== screenId);
@@ -359,13 +363,21 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
     return customPrompt;
   };
 
-  const openPromptSheet = (screen: EnhancedScreenItem) => {
-    setSelectedScreen(screen);
-    setIsPromptSheetOpen(true);
+  const handleGenerateDeveloperPrompt = () => {
+    if (selectedScreen) {
+      setGeneratedScreens(prev => new Set(prev).add(selectedScreen.id));
+    }
   };
 
-  const handleGenerateDeveloperPrompt = () => {
-    setShowDeveloperPrompt(true);
+  const handleRegeneratePrompt = () => {
+    toast({
+      title: "Prompt regenerated!",
+      description: "Developer prompt has been regenerated.",
+    });
+  };
+
+  const isScreenGenerated = (screenId: string) => {
+    return generatedScreens.has(screenId);
   };
 
   return (
@@ -474,7 +486,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
 
             {/* Content */}
             <div className="flex-1 overflow-hidden">
-              {!showDeveloperPrompt ? (
+              {!isScreenGenerated(selectedScreen.id) ? (
                 /* Initial View - Centered Generate Button */
                 <div className="flex-1 flex flex-col items-center justify-center p-6">
                   <div className="text-center space-y-6 max-w-md">
@@ -493,7 +505,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                   </div>
                 </div>
               ) : (
-                /* Developer Prompt View - Show only the prompt */
+                /* Developer Prompt View - Show the prompt */
                 <div className="flex-1 overflow-auto p-6">
                   <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-4">
@@ -501,13 +513,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
-                          onClick={() => {
-                            // Regenerate prompt logic can be added here
-                            toast({
-                              title: "Prompt regenerated!",
-                              description: "Developer prompt has been regenerated.",
-                            });
-                          }}
+                          onClick={handleRegeneratePrompt}
                           size="sm"
                           className="gap-2"
                         >
@@ -515,7 +521,7 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
                           Regenerate
                         </Button>
                         <Button
-                          onClick={() => copyPromptToClipboard(selectedScreen.frontendPrompt || "", selectedScreen.id)}
+                          onClick={() => copyPromptToClipboard(generateCustomPrompt(selectedScreen), selectedScreen.id)}
                           size="sm"
                           className="gap-2"
                         >
@@ -592,42 +598,6 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Enhanced Prompt Sheet */}
-      <Sheet open={isPromptSheetOpen} onOpenChange={setIsPromptSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[800px]">
-          <SheetHeader>
-            <SheetTitle>Generated Frontend Prompt</SheetTitle>
-          </SheetHeader>
-          {selectedScreen && (
-            <div className="mt-4 space-y-4">
-              <div className="bg-muted rounded-lg p-4 max-h-[500px] overflow-auto">
-                <pre className="whitespace-pre-wrap text-sm">
-                  {generateCustomPrompt(selectedScreen)}
-                </pre>
-              </div>
-              <SheetFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsPromptSheetOpen(false)}
-                >
-                  Close
-                </Button>
-                <Button
-                  onClick={() => {
-                    copyPromptToClipboard(generateCustomPrompt(selectedScreen), selectedScreen.id);
-                    setIsPromptSheetOpen(false);
-                  }}
-                  className="gap-2"
-                >
-                  <Copy className="h-4 w-4" />
-                  Copy Enhanced Prompt
-                </Button>
-              </SheetFooter>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
 
       {/* Lightbox */}
       {lightboxImage && (

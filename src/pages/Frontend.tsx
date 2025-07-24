@@ -270,7 +270,7 @@ export default function Frontend() {
 
   const handleScreenSelect = (screen: EnhancedScreenItem) => {
     setSelectedScreen(screen);
-    setShowDeveloperPrompt(false); // Reset to preview when selecting new screen
+    // Don't reset showDeveloperPrompt - keep it as is
   };
 
   const handleEditScreen = (screen: EnhancedScreenItem) => {
@@ -476,16 +476,19 @@ Ready to implement this screen? Copy this prompt and use it with your preferred 
             <div className="flex-1 overflow-hidden">
               {!showDeveloperPrompt ? (
                 /* Initial View - Centered Generate Button */
-                <div className="flex-1 flex flex-col items-center justify-center p-6">
+                <div className="flex-1 flex items-center justify-center p-8">
                   <div className="text-center space-y-6 max-w-md">
-                    <h3 className="text-lg font-semibold">Frontend Development Prompt</h3>
+                    <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                      <FileCode className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Generate Frontend Prompt</h3>
                     <p className="text-muted-foreground">
-                      Generate a comprehensive development prompt for implementing this screen with modern React, TypeScript, and Tailwind CSS.
+                      Create a comprehensive development prompt for implementing this screen with modern React, TypeScript, and Tailwind CSS.
                     </p>
                     <Button 
                       size="lg" 
                       onClick={handleGenerateDeveloperPrompt} 
-                      className="w-full gap-2"
+                      className="gap-2"
                     >
                       <FileCode className="h-5 w-5" />
                       Generate Developer Prompt

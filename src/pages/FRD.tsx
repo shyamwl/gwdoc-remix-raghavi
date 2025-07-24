@@ -290,23 +290,13 @@ Each functional requirement must meet the following criteria:
 
 export default function FRD() {
   const [content, setContent] = useState(SAMPLE_FRD_CONTENT);
-  const [isGenerated, setIsGenerated] = useState(false);
   const { toast } = useToast();
 
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log("Saving FRD content:", content);
     toast({
       title: "Document saved",
       description: "Your FRD has been saved successfully.",
-    });
-  };
-
-  const handleGenerate = () => {
-    setIsGenerated(true);
-    toast({
-      title: "FRD Generated",
-      description: "Your Functional Requirements Document has been generated successfully.",
     });
   };
 
@@ -374,27 +364,6 @@ export default function FRD() {
       description: "Your FRD has been exported as DOCX.",
     });
   };
-
-  if (!isGenerated) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="text-center space-y-6 max-w-md">
-          <h1 className="text-3xl font-bold">Functional Requirements Document</h1>
-          <p className="text-muted-foreground">
-            Generate a comprehensive FRD for your project based on system behavior, user interactions, and technical specifications.
-          </p>
-          <Button 
-            size="lg" 
-            onClick={handleGenerate} 
-            className="w-full gap-2"
-          >
-            <Sparkles className="h-5 w-5" />
-            Generate FRD
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6">

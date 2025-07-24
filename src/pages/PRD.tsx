@@ -204,23 +204,13 @@ This document requires approval from:
 
 export default function PRD() {
   const [content, setContent] = useState(SAMPLE_PRD_CONTENT);
-  const [isGenerated, setIsGenerated] = useState(false);
   const { toast } = useToast();
 
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log("Saving PRD content:", content);
     toast({
       title: "Document saved",
       description: "Your PRD has been saved successfully.",
-    });
-  };
-
-  const handleGenerate = () => {
-    setIsGenerated(true);
-    toast({
-      title: "PRD Generated",
-      description: "Your Product Requirements Document has been generated successfully.",
     });
   };
 
@@ -288,27 +278,6 @@ export default function PRD() {
       description: "Your PRD has been exported as DOCX.",
     });
   };
-
-  if (!isGenerated) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="text-center space-y-6 max-w-md">
-          <h1 className="text-3xl font-bold">Product Requirements Document</h1>
-          <p className="text-muted-foreground">
-            Generate a comprehensive PRD for your project based on product vision, user stories, success metrics, and feature specifications.
-          </p>
-          <Button 
-            size="lg" 
-            onClick={handleGenerate} 
-            className="w-full gap-2"
-          >
-            <Sparkles className="h-5 w-5" />
-            Generate PRD
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6">
